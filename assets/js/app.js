@@ -773,3 +773,21 @@
     init();
   }
 })();
+
+// Go To Top Button
+const goToTopBtn = document.getElementById('goToTopBtn');
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 400) {
+    goToTopBtn.classList.add('is-visible');
+  } else {
+    goToTopBtn.classList.remove('is-visible');
+  }
+});
+
+goToTopBtn.addEventListener('click', () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+});
