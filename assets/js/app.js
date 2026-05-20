@@ -775,19 +775,20 @@
 })();
 
 // Go To Top Button
-const goToTopBtn = document.getElementById('goToTopBtn');
+(function () {
+  const goToTopBtn = document.getElementById('goToTopBtn');
+  if (!goToTopBtn || goToTopBtn.dataset.goTopBound === '1') return;
 
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 400) {
-    goToTopBtn.classList.add('is-visible');
-  } else {
-    goToTopBtn.classList.remove('is-visible');
+  goToTopBtn.dataset.goTopBound = '1';
+
+  function syncGoTopButton() {
+    goToTopBtn.classList.toggle('is-visible', window.scrollY > 320);
   }
-});
 
-goToTopBtn.addEventListener('click', () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
+  window.addEventListener('scroll', syncGoTopButton, { passive: true });
+  syncGoTopButton();
+
+  goToTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
-});
+})();
