@@ -1459,7 +1459,7 @@ a { color: inherit; text-decoration: none; }
   }
 
   .quran-basmala {
-    font-size: clamp(3.2rem, 18vw, 5.6rem);
+    font-size: 30px;
     line-height: 1.1;
   }
 
