@@ -1180,7 +1180,7 @@ a { color: inherit; text-decoration: none; }
 
 .quran-install-app {
   position: fixed;
-  left: 18px;
+  right: 18px;
   bottom: 18px;
   z-index: 1000;
   display: inline-flex;
