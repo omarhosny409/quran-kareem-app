@@ -82,6 +82,48 @@ body {
   font-family: "Cairo", "Tahoma", sans-serif;
   color: var(--quran-text);
 }
+/* Go To Top Button */
+.go-to-top {
+  position: fixed;
+  left: 18px;
+  bottom: 22px;
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--primary, #0f8f6b);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px);
+  transition: 0.25s ease;
+}
+
+.go-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.go-to-top:hover {
+  transform: translateY(-4px);
+}
+
+@media (max-width: 600px) {
+  .go-to-top {
+    left: 14px;
+    bottom: 18px;
+    width: 46px;
+    height: 46px;
+    font-size: 24px;
+  }
+}
 
 .quran-site-header {
   position: sticky;
@@ -1585,48 +1627,5 @@ a { color: inherit; text-decoration: none; }
 
   .quran-stat-grid div {
     min-height: 96px;
-  }
-}
-
-/* Go To Top Button */
-.go-to-top {
-  position: fixed;
-  left: 18px;
-  bottom: 22px;
-  width: 52px;
-  height: 52px;
-  border: 0;
-  border-radius: 50%;
-  background: var(--primary, #0f8f6b);
-  color: #fff;
-  font-size: 28px;
-  font-weight: 800;
-  line-height: 1;
-  cursor: pointer;
-  z-index: 9999;
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(16px);
-  transition: 0.25s ease;
-}
-
-.go-to-top.is-visible {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.go-to-top:hover {
-  transform: translateY(-4px);
-}
-
-@media (max-width: 600px) {
-  .go-to-top {
-    left: 14px;
-    bottom: 18px;
-    width: 46px;
-    height: 46px;
-    font-size: 24px;
   }
 }
