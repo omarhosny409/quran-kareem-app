@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-quran-theme="emerald">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="قسم أحاديث مستقل ضمن موقع قرآن كريم ثابت HTML: كتب الحديث، بحث، تصفح الأبواب، وعرض الحديث العربي مع الحكم والمرجع عند توفرهما.">
+  <meta name="theme-color" content="#0f8b68">
+  <title>الأحاديث النبوية | القرآن الكريم</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="قرآن وحديث">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/icon-180.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="assets/icons/icon-192.png">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header class="quran-site-header" dir="rtl">
+    <div class="quran-container quran-site-header__inner">
+      <a class="quran-site-brand" href="index.html" aria-label="العودة للرئيسية">
+        <span class="quran-site-brand__mark">ق</span>
+        <span><strong>القرآن الكريم</strong><small>قرآن · تفسير · حديث</small></span>
+      </a>
+      <nav class="quran-site-nav" aria-label="روابط الموقع">
+        <a href="index.html">الرئيسية</a>
+        <a href="surah.html">القارئ</a>
+        <a href="search.html">البحث</a>
+        <a href="tafsir.html">التفسير</a>
+        <a href="hadith.html" aria-current="page">الأحاديث</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="hadith-app" class="quran-app hadith-app" dir="rtl">
+    <section class="quran-hero hadith-hero" aria-labelledby="hadith-title">
+      <div class="quran-hero__glow quran-hero__glow--one"></div>
+      <div class="quran-hero__glow quran-hero__glow--two"></div>
+      <div class="quran-container quran-hero__grid">
+        <div class="quran-hero__content">
+          <span class="quran-kicker">موسوعة الحديث</span>
+          <h1 id="hadith-title">قسم مستقل للأحاديث النبوية: تصفح الكتب، اقرأ الأبواب، وابحث داخل النص العربي.</h1>
+          <p>الصفحة مهيأة لعرض آلاف الأحاديث من أشهر دواوين السنة عبر ملفات JSON عامة، مع بحث شامل، تصفية بالأبواب، وواجهة قراءة واضحة.</p>
+          <div class="quran-hero__actions">
+            <a href="#hadith-browser" class="quran-btn quran-btn--primary">ابدأ التصفح</a>
+            <a href="#hadith-search-panel" class="quran-btn quran-btn--ghost">البحث في الحديث</a>
+          </div>
+        </div>
+        <aside class="quran-hero__panel hadith-hero__panel" aria-label="إحصاءات الحديث">
+          <div class="quran-basmala">ﷺ</div>
+          <div class="quran-stat-grid">
+            <div><strong>17+</strong><span>كتابًا</span></div>
+            <div><strong>50K+</strong><span>حديثًا محتملًا</span></div>
+            <div><strong>RTL</strong><span>نص عربي</span></div>
+            <div><strong>بحث</strong><span>محلي/شامل</span></div>
+          </div>
+          <p>اختر الكتاب أولًا ثم حمّل الأحاديث. البحث الشامل يحمّل الكتب المطلوبة تدريجيًا لأنه ثقيل.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="quran-toolbar" aria-label="إعدادات العرض">
+      <div class="quran-container quran-toolbar__inner">
+        <div class="quran-theme-switcher" role="group" aria-label="اختيار الثيم">
+          <button type="button" data-theme="emerald" class="is-active">زمردي</button>
+          <button type="button" data-theme="midnight">ليلي</button>
+          <button type="button" data-theme="royal">ملكي</button>
+          <button type="button" data-theme="sepia">ورقي</button>
+          <button type="button" data-theme="minimal">فاتح</button>
+        </div>
+        <div class="quran-font-tools" role="group" aria-label="حجم الخط">
+          <button type="button" data-font="decrease">-</button>
+          <span>حجم الخط</span>
+          <button type="button" data-font="increase">+</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="hadith-browser" class="hadith-browser-section">
+      <div class="quran-container hadith-layout">
+        <aside class="hadith-sidebar quran-card">
+          <span class="quran-kicker">كتب الحديث</span>
+          <h2>اختر المصدر</h2>
+          <p class="quran-muted">القائمة تعتمد على ملفات عربية متاحة من Hadith API عبر CDN. الكتب غير المحملة لا تستهلك من سرعة الصفحة.</p>
+          <div id="hadith-book-list" class="hadith-book-list" aria-live="polite"></div>
+        </aside>
+
+        <div class="hadith-main">
+          <section id="hadith-search-panel" class="quran-card hadith-search-panel" aria-label="بحث الحديث">
+            <div class="hadith-panel-head">
+              <div>
+                <span class="quran-kicker">البحث</span>
+                <h2>ابحث في الحديث النبوي</h2>
+              </div>
+              <button id="hadith-load-book" type="button" class="quran-btn quran-btn--primary">تحميل الكتاب</button>
+            </div>
+            <div class="hadith-controls-grid">
+              <label>
+                <span>الكتاب</span>
+                <select id="hadith-book-select" aria-label="اختيار كتاب الحديث"></select>
+              </label>
+              <label>
+                <span>الباب</span>
+                <select id="hadith-section-select" aria-label="تصفية أبواب الحديث"><option value="all">كل الأبواب</option></select>
+              </label>
+              <label>
+                <span>نطاق البحث</span>
+                <select id="hadith-search-scope" aria-label="نطاق البحث">
+                  <option value="current">الكتاب الحالي</option>
+                  <option value="all">كل الكتب المتاحة</option>
+                </select>
+              </label>
+            </div>
+            <div class="quran-search-box hadith-search-box">
+              <input id="hadith-query" type="search" inputmode="search" placeholder="مثال: إنما الأعمال، الرحمة، الصلاة..." aria-label="بحث في الأحاديث">
+              <button id="hadith-search-btn" type="button" class="quran-btn quran-btn--primary">بحث</button>
+            </div>
+            <div id="hadith-status" class="hadith-status" role="status" aria-live="polite">اختر كتابًا ثم اضغط تحميل الكتاب.</div>
+          </section>
+
+          <section class="quran-card hadith-reader-card" aria-label="عرض الأحاديث">
+            <div class="hadith-panel-head">
+              <div>
+                <span class="quran-kicker">القارئ</span>
+                <h2 id="hadith-current-title">لم يتم تحميل كتاب بعد</h2>
+              </div>
+              <div class="hadith-pagination">
+                <button id="hadith-prev-page" type="button">السابق</button>
+                <span id="hadith-page-label">صفحة 1</span>
+                <button id="hadith-next-page" type="button">التالي</button>
+              </div>
+            </div>
+            <div id="hadith-results" class="hadith-results" aria-live="polite">
+              <div class="hadith-empty">سيظهر هنا محتوى الكتاب أو نتائج البحث.</div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="hadith-note-section">
+      <div class="quran-container">
+        <div class="quran-card hadith-note">
+          <span class="quran-kicker">تنبيه علمي</span>
+          <h2>مصطلح “كل أحاديث الرسول” عمليًا يعني موسوعة كبيرة لا ملفًا واحدًا.</h2>
+          <p>الصفحة مجهزة لجلب أشهر كتب السنة وما يتوفر من ملفات عربية. الأحكام، الأبواب، والترقيم تُعرض عند وجودها في مصدر البيانات. عند النشر النهائي يستحسن مراجعة المصدر العلمي المعتمد قبل الاعتماد الفقهي أو البحثي.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="quran-site-footer" dir="rtl">
+    <div class="quran-container quran-site-footer__grid">
+      <div><strong>القرآن الكريم</strong><p>موقع ثابت HTML/CSS/JS للقراءة والبحث والتفسير والأحاديث.</p></div>
+      <div><span>التشغيل</span><p>ارفع المجلد كما هو على أي استضافة Static. لا يحتاج WordPress أو قاعدة بيانات.</p></div>
+      <div><span>البيانات</span><p>الأحاديث تُجلب عند الطلب من ملفات JSON عامة مع واجهة بحث وتصفح.</p></div>
+    </div>
+  </footer>
+
+  <script src="assets/js/hadith.js" defer></script>
+  <script src="assets/js/pwa.js" defer></script>
+</body>
+</html>
