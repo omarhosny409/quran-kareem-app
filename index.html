@@ -192,6 +192,43 @@
   </footer>
 
   <!-- Go To Top Button -->
+  <nav class="quran-mobile-tabbar" aria-label="شريط تطبيق الموبايل">
+    <a class="quran-mobile-tabbar__item" href="index.html" aria-current="page">
+      <span class="quran-mobile-tabbar__icon" aria-hidden="true">⌂</span>
+      <span>الرئيسية</span>
+    </a>
+    <a class="quran-mobile-tabbar__item" href="surah.html">
+      <span class="quran-mobile-tabbar__icon" aria-hidden="true">☾</span>
+      <span>القارئ</span>
+    </a>
+    <a class="quran-mobile-tabbar__item" href="search.html">
+      <span class="quran-mobile-tabbar__icon" aria-hidden="true">⌕</span>
+      <span>البحث</span>
+    </a>
+    <a class="quran-mobile-tabbar__item" href="tafsir.html">
+      <span class="quran-mobile-tabbar__icon" aria-hidden="true">◈</span>
+      <span>التفسير</span>
+    </a>
+    <a class="quran-mobile-tabbar__item" href="hadith.html">
+      <span class="quran-mobile-tabbar__icon" aria-hidden="true">✦</span>
+      <span>الأحاديث</span>
+    </a>
+    <button class="quran-mobile-tabbar__item quran-mobile-theme-toggle" type="button" data-mobile-theme-toggle aria-expanded="false" aria-controls="quran-mobile-theme-panel">
+      <span class="quran-mobile-tabbar__icon" aria-hidden="true">◐</span>
+      <span>الثيم</span>
+    </button>
+    <div id="quran-mobile-theme-panel" class="quran-mobile-theme-panel" hidden>
+      <strong>اختار الثيم والألوان</strong>
+      <div class="quran-mobile-theme-options" role="group" aria-label="اختيار الثيم من شريط الموبايل">
+        <button type="button" data-theme="emerald">زمردي</button>
+        <button type="button" data-theme="midnight">ليلي</button>
+        <button type="button" data-theme="royal">ملكي</button>
+        <button type="button" data-theme="sepia">ورقي</button>
+        <button type="button" data-theme="minimal">فاتح</button>
+      </div>
+    </div>
+  </nav>
+
   <button id="goToTopBtn" class="go-to-top" type="button" aria-label="الرجوع إلى الأعلى">
     ↑
   </button>
