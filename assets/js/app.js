@@ -119,6 +119,7 @@
   ];
 
   const TAFSIRS = [
+    { key: 'siraj', label: 'السراج', api: 'jsdelivr', edition: 'ara-sirajtafseer' },
     { key: 'muyassar', label: 'الميسر', api: 'quran-tafseer', id: 1 },
     { key: 'saadi', label: 'السعدي', api: 'quran-tafseer', id: 3 },
     { key: 'ibn-kathir', label: 'ابن كثير', api: 'quran-tafseer', id: 4 },
@@ -128,7 +129,8 @@
   const API = {
     quranCloud: 'https://api.alquran.cloud/v1',
     quranTafseer: 'https://api.quran-tafseer.com',
-    quranpedia: 'https://api.quranpedia.net/v1'
+    quranpedia: 'https://api.quranpedia.net/v1',
+    jsdelivrQuran: 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1'
   };
 
   const state = {
@@ -450,62 +452,192 @@
     return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 
+  function extractTextValue(item) {
+    if (!item || typeof item !== 'object') return typeof item === 'string' ? item : '';
+    return item.text || item.tafseer || item.tafsir || item.translation || item.translation_text || item.content || item.value || item.note || '';
+  }
+
   function extractQuranpediaText(payload) {
     if (!payload) return '';
     if (Array.isArray(payload.content)) {
-      return payload.content.map(item => item.text || item.value || item.content || '').filter(Boolean).join('\n\n');
+      return payload.content.map(item => extractTextValue(item)).filter(Boolean).join('\n\n');
     }
     if (typeof payload.content === 'string') return payload.content;
-    return payload.text || payload.value || payload.tafsir || payload.note || '';
+    return extractTextValue(payload);
+  }
+
+  function extractGeneralTafsirText(payload) {
+    if (!payload) return '';
+    if (typeof payload === 'string') return payload;
+    if (Array.isArray(payload)) return payload.map(extractGeneralTafsirText).filter(Boolean).join('\n\n');
+    if (payload.tafsirs && Array.isArray(payload.tafsirs)) return extractGeneralTafsirText(payload.tafsirs);
+    if (payload.data) return extractGeneralTafsirText(payload.data);
+    if (payload.result) return extractGeneralTafsirText(payload.result);
+    return extractTextValue(payload);
+  }
+
+  function extractJsdelivrVerse(payload, surah, ayah) {
+    const wantedSurah = Number(surah);
+    const wantedAyah = Number(ayah);
+
+    function verseNumber(item) {
+      return Number(item?.verse ?? item?.ayah ?? item?.aya ?? item?.number ?? item?.numberInSurah ?? item?.verse_number ?? item?.ayah_number);
+    }
+
+    function chapterNumber(item, inherited) {
+      return Number(item?.chapter ?? item?.surah ?? item?.sura ?? item?.chapter_number ?? item?.surah_number ?? item?.id ?? item?.number ?? inherited);
+    }
+
+    function textFrom(item) {
+      return extractTextValue(item);
+    }
+
+    function scan(node, inheritedSurah = null) {
+      if (!node) return '';
+      if (typeof node === 'string') return '';
+
+      if (Array.isArray(node)) {
+        for (const item of node) {
+          const found = scan(item, inheritedSurah);
+          if (found) return found;
+        }
+        return '';
+      }
+
+      if (typeof node !== 'object') return '';
+
+      const currentSurah = chapterNumber(node, inheritedSurah);
+      const currentVerse = verseNumber(node);
+      if (currentSurah === wantedSurah && currentVerse === wantedAyah) {
+        const direct = textFrom(node);
+        if (direct) return direct;
+      }
+
+      const collections = [node.quran, node.verses, node.ayahs, node.ayat, node.surahs, node.chapters, node.data, node.result];
+      for (const collection of collections) {
+        const found = scan(collection, Number.isFinite(currentSurah) ? currentSurah : inheritedSurah);
+        if (found) return found;
+      }
+
+      const knownKeys = new Set(['quran', 'verses', 'ayahs', 'ayat', 'surahs', 'chapters', 'data', 'result']);
+      for (const [key, value] of Object.entries(node)) {
+        if (knownKeys.has(key)) continue;
+        const numericKey = Number(key);
+        const nextSurah = Number.isFinite(numericKey) ? numericKey : (Number.isFinite(currentSurah) ? currentSurah : inheritedSurah);
+        if (!Number.isFinite(nextSurah) || nextSurah === wantedSurah) {
+          const found = scan(value, nextSurah);
+          if (found) return found;
+        }
+      }
+      return '';
+    }
+
+    return scan(payload);
+  }
+
+  async function fetchJson(url) {
+    const response = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'force-cache' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
   }
 
   async function fetchQuranpediaTafsir(surah, ayah, bookId = 1) {
     const endpoint = `${API.quranpedia}/ayah/${surah}/${ayah}/book/${bookId}`;
-    const response = await fetch(endpoint, { headers: { Accept: 'application/json' } });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
+    const payload = await fetchJson(endpoint);
     return extractQuranpediaText(payload);
   }
 
-  async function fetchTafsir(source, surah, ayah) {
-    const cacheKey = `quran-tafsir-${source.key}-${surah}-${ayah}`;
-    const cached = localStorage.getItem(cacheKey);
-    if (cached) return cached;
-
-    let text = '';
-    if (source.api === 'quran-tafseer') {
+  async function fetchQuranTafseerApi(source, surah, ayah) {
+    const endpoints = [
+      `${API.quranTafseer}/tafseer/${source.id}/${surah}/${ayah}`,
+      `${API.quranTafseer}/tafseer/${source.id}/${surah}/${ayah}/${ayah}`
+    ];
+    let lastError = null;
+    for (const endpoint of endpoints) {
       try {
-        const endpoint = `${API.quranTafseer}/tafseer/${source.id}/${surah}/${ayah}`;
-        const response = await fetch(endpoint, { headers: { Accept: 'application/json' } });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const payload = await response.json();
-        text = payload.text || payload.tafseer || payload.tafsir || '';
+        const payload = await fetchJson(endpoint);
+        const text = extractGeneralTafsirText(payload);
+        if (stripHtml(text).trim()) return text;
       } catch (error) {
-        text = await fetchQuranpediaTafsir(surah, ayah, 1);
+        lastError = error;
       }
-    } else {
-      text = await fetchQuranpediaTafsir(surah, ayah, source.id);
+    }
+    throw lastError || new Error('Quran Tafseer API failed');
+  }
+
+  async function fetchJsdelivrTafsir(source, surah, ayah) {
+    const edition = source.edition || 'ara-sirajtafseer';
+    const cacheKey = `quran-tafsir-edition-${edition}`;
+    const chapterUrls = [
+      `${API.jsdelivrQuran}/editions/${edition}/${surah}.min.json`,
+      `${API.jsdelivrQuran}/editions/${edition}/${surah}.json`
+    ];
+
+    for (const url of chapterUrls) {
+      try {
+        const payload = await fetchJson(url);
+        const text = extractJsdelivrVerse(payload, surah, ayah) || extractGeneralTafsirText(payload);
+        if (stripHtml(text).trim()) return text;
+      } catch (error) {}
     }
 
-    text = stripHtml(text).trim();
-    if (!text) throw new Error('Empty tafsir response');
-    localStorage.setItem(cacheKey, text);
-    return text;
+    let payload = null;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      try { payload = JSON.parse(cached); } catch (error) { payload = null; }
+    }
+    if (!payload) {
+      payload = await fetchJson(`${API.jsdelivrQuran}/editions/${edition}.min.json`);
+      try { localStorage.setItem(cacheKey, JSON.stringify(payload)); } catch (error) {}
+    }
+
+    return extractJsdelivrVerse(payload, surah, ayah);
+  }
+
+  async function fetchTafsirFromSource(source, surah, ayah) {
+    if (source.api === 'jsdelivr') return fetchJsdelivrTafsir(source, surah, ayah);
+    if (source.api === 'quranpedia') return fetchQuranpediaTafsir(surah, ayah, source.id);
+    if (source.api === 'quran-tafseer') return fetchQuranTafseerApi(source, surah, ayah);
+    throw new Error('Unknown tafsir source');
+  }
+
+  async function fetchTafsir(source, surah, ayah) {
+    const cacheKey = `quran-tafsir-v4-${source.key}-${surah}-${ayah}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) return { text: cached, label: source.label, fallback: false };
+
+    const orderedSources = [source, ...TAFSIRS.filter(item => item.key !== source.key)];
+    let lastError = null;
+    for (const candidate of orderedSources) {
+      try {
+        let text = await fetchTafsirFromSource(candidate, surah, ayah);
+        text = stripHtml(text).replace(/\s{3,}/g, ' ').trim();
+        if (!text) throw new Error('Empty tafsir response');
+        localStorage.setItem(cacheKey, text);
+        return { text, label: candidate.label, fallback: candidate.key !== source.key };
+      } catch (error) {
+        lastError = error;
+      }
+    }
+    throw lastError || new Error('All tafsir sources failed');
   }
 
   async function loadTafsir(sourceKey) {
     const content = $('#quran-tafsir-content');
     if (!content || !state.selectedWord) return;
     const source = TAFSIRS.find(item => item.key === sourceKey) || TAFSIRS[0];
-    content.textContent = 'جارِ تحميل التفسير...';
-    content.classList.remove('quran-error');
+    content.innerHTML = '<span class="quran-tafsir-status">جارِ تحميل التفسير...</span>';
+    content.classList.remove('quran-error', 'is-loaded');
 
     try {
-      const text = await fetchTafsir(source, state.selectedWord.surah, state.selectedWord.ayah);
-      content.textContent = text;
+      const result = await fetchTafsir(source, state.selectedWord.surah, state.selectedWord.ayah);
+      content.classList.add('is-loaded');
+      const note = result.fallback ? `تم عرض مصدر بديل: ${result.label}` : `المصدر: ${result.label}`;
+      content.innerHTML = `<span class="quran-tafsir-status">${escapeHtml(note)}</span><div>${escapeHtml(result.text).replace(/\n/g, '<br>')}</div>`;
     } catch (error) {
+      const currentAyah = getCurrentAyah(state.selectedWord.ayah);
       content.classList.add('quran-error');
-      content.textContent = 'تعذر تحميل هذا المصدر الآن. جرّب مصدراً آخر أو تحقق من اتصال الموقع بالإنترنت.';
+      content.innerHTML = `تعذر تحميل التفسير من كل المصادر الآن.<br><br><b>نص الآية:</b><br>${currentAyah ? escapeHtml(currentAyah.text) : '—'}<br><span class="quran-tafsir-source-note">تأكد من أن اتصال الإنترنت يعمل، ثم اضغط على مصدر آخر أو أعد فتح الصفحة.</span>`;
     }
   }
 
