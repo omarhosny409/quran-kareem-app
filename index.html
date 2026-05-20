@@ -26,7 +26,11 @@
         <span class="quran-site-brand__mark">ق</span>
         <span><strong>القرآن الكريم</strong><small>قرآن · تفسير · حديث</small></span>
       </a>
-      <nav class="quran-site-nav" aria-label="روابط الموقع">
+      <button class="quran-menu-toggle" type="button" aria-controls="quran-site-menu" aria-expanded="false" aria-label="فتح القائمة">
+        <span>القائمة</span>
+        <i></i><i></i><i></i>
+      </button>
+      <nav id="quran-site-menu" class="quran-site-nav" aria-label="روابط الموقع">
         <a href="index.html" aria-current="page">الرئيسية</a>
         <a href="surah.html">القارئ</a>
         <a href="search.html">البحث</a>
@@ -34,6 +38,7 @@
         <a href="hadith.html">الأحاديث</a>
       </nav>
     </div>
+    <button class="quran-menu-backdrop" type="button" data-menu-close aria-label="إغلاق القائمة" hidden></button>
   </header>
 
   <main id="quran-app" class="quran-app" dir="rtl">
@@ -177,6 +182,12 @@
       <div><strong>القرآن الكريم</strong><p>موقع ثابت HTML/CSS/JS للقراءة والبحث والتفسير والأحاديث.</p></div>
       <div><span>التشغيل</span><p>ارفع المجلد كما هو على أي استضافة Static. لا يحتاج WordPress أو قاعدة بيانات.</p></div>
       <div><span>البيانات</span><p>النص والتفسير يتم جلبهما عند التشغيل من APIs عامة مع تخزين مؤقت داخل المتصفح.</p></div>
+      <div class="quran-credit">
+        <span>تصميم وبرمجة</span>
+        <strong>Omar Hosny</strong>
+        <a href="tel:+201210150524" dir="ltr">01210150524</a>
+        <a href="mailto:omarhosny10100@gmail.com" dir="ltr">omarhosny10100@gmail.com</a>
+      </div>
     </div>
   </footer>
 
