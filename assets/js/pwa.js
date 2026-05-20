@@ -23,6 +23,32 @@
     return button;
   }
 
+
+
+  function bindMobileMenu() {
+    const toggle = document.querySelector('.quran-menu-toggle');
+    const nav = document.querySelector('.quran-site-nav');
+    const backdrop = document.querySelector('.quran-menu-backdrop');
+    if (!toggle || !nav) return;
+
+    function setMenu(open) {
+      document.body.classList.toggle('quran-menu-open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-label', open ? 'إغلاق القائمة' : 'فتح القائمة');
+      if (backdrop) backdrop.hidden = !open;
+    }
+
+    toggle.addEventListener('click', () => setMenu(!document.body.classList.contains('quran-menu-open')));
+    backdrop?.addEventListener('click', () => setMenu(false));
+    nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenu(false)));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') setMenu(false);
+    });
+    window.addEventListener('resize', () => {
+      if (window.matchMedia('(min-width: 821px)').matches) setMenu(false);
+    });
+  }
+
   function bindInstallPrompt() {
     if (isStandalone) return;
 
@@ -53,8 +79,9 @@
 
   registerServiceWorker();
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bindInstallPrompt);
+    document.addEventListener('DOMContentLoaded', () => { bindMobileMenu(); bindInstallPrompt(); });
   } else {
+    bindMobileMenu();
     bindInstallPrompt();
   }
 })();
