@@ -1,8 +1,8 @@
-const CACHE_VERSION='quran-kareem-mobile-app-v7-real-data';
+const CACHE_VERSION='quran-kareem-mobile-app-v8-reviewed-index-language';
 const STATIC_CACHE=`${CACHE_VERSION}-static`;
 const RUNTIME_CACHE=`${CACHE_VERSION}-runtime`;
 const AUDIO_CACHE=`${CACHE_VERSION}-audio`;
-const APP_SHELL=['./','./index.html','./surah.html','./search.html','./hadith.html','./audio.html','./library.html','./settings.html','./tafsir.html','./manifest.json','./assets/css/mobile-app.css','./assets/js/mobile-app.js','./assets/js/real-features.js','./assets/js/pwa.js','./assets/icons/favicon-16.png','./assets/icons/favicon-32.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png','./assets/icons/maskable-192.png','./assets/icons/maskable-512.png'];
+const APP_SHELL=['./','./index.html','./surah.html','./search.html','./hadith.html','./audio.html','./library.html','./settings.html','./tafsir.html','./manifest.json','./assets/css/mobile-app.css','./assets/css/qma-reviewed.css','./assets/js/mobile-app.js','./assets/js/real-features.js','./assets/js/qma-reviewed.js','./assets/js/pwa.js','./assets/icons/favicon-16.png','./assets/icons/favicon-32.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png','./assets/icons/maskable-192.png','./assets/icons/maskable-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(STATIC_CACHE).then(cache=>cache.addAll(APP_SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>!key.startsWith(CACHE_VERSION)).map(key=>caches.delete(key)))).then(()=>self.clients.claim()))});
 async function cacheFirst(request,cacheName=STATIC_CACHE){const cached=await caches.match(request);if(cached)return cached;const response=await fetch(request);if(response&&(response.ok||response.type==='opaque')){const cache=await caches.open(cacheName);cache.put(request,response.clone())}return response}
