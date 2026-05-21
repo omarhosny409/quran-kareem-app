@@ -5,10 +5,11 @@
   "id": "./",
   "start_url": "./surah.html",
   "scope": "./",
-  "display": "standalone",
+  "display": "browser",
   "display_override": [
-    "standalone",
-    "minimal-ui"
+    "browser",
+    "minimal-ui",
+    "standalone"
   ],
   "orientation": "portrait-primary",
   "dir": "rtl",

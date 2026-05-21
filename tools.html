@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-quran-theme="classic">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f8b68">
+  <meta name="description" content="تطبيق قرآن كريم PWA بواجهة موبايل، قراءة مصحف، أدوات، بحث، صوتيات، مكتبة، وإعدادات أوفلاين.">
+  <title>أدوات المسلم | القرآن الكريم</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="قرآن كريم">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/icon-180.png">
+  <link rel="stylesheet" href="assets/css/mobile-app.css">
+  <link rel="stylesheet" href="assets/css/qma-reviewed.css">
+  <link rel="stylesheet" href="assets/css/qma-final-polish.css">
+</head>
+<body class="qma-body" data-qma-page="tools">
+  <main class="qma-app">
+    <section class="qma-page-title"><div><h1>أدوات المسلم</h1><p>إجراءات سريعة بتصميم الموقع الحالي</p></div><a class="qma-round-btn" href="settings.html" aria-label="الإعدادات">⚙</a></section>
+    <section class="qma-quick-grid" aria-label="إجراءات سريعة">
+      <button class="qma-action-card" data-action="qibla"><span class="qma-action-icon">◉</span><b>القبلة</b></button><button class="qma-action-card" data-href="surah.html"><span class="qma-action-icon">▰</span><b>الختمة</b></button><button class="qma-action-card" data-action="stats"><span class="qma-action-icon">▥</span><b>إحصائيات</b></button><button class="qma-action-card" data-action="mosque"><span class="qma-action-icon">⌂</span><b>أقرب مسجد</b></button><button class="qma-action-card" data-href="hadith.html"><span class="qma-action-icon">▣</span><b>الحديث</b></button><button class="qma-action-card" data-action="recite"><span class="qma-action-icon">◖</span><b>تسميع</b></button><button class="qma-action-card" data-action="share"><span class="qma-action-icon">↗</span><b>مشاركة</b></button><button class="qma-action-card" data-action="tasbeeh"><span class="qma-action-icon">◌</span><b>المسبحة</b></button>
+    </section>
+    <section class="qma-card qma-prayer-card" aria-label="أوقات الصلاة"><div class="qma-card-head"><span class="qma-icon-btn">‹</span><h2>أوقات الصلاة</h2></div><div class="qma-next-prayer"><span>الصلاة القادمة: الظهر</span><strong>PM 12:51</strong></div><div class="qma-prayer-times"><div class="qma-prayer-time">الفجر<b>4:14</b></div><div class="qma-prayer-time">الظهر<b>12:51</b></div><div class="qma-prayer-time">العصر<b>4:28</b></div><div class="qma-prayer-time">المغرب<b>7:44</b></div><div class="qma-prayer-time">العشاء<b>9:14</b></div></div><div class="qma-card-foot"><span id="qma-hijri-date">—</span><span>توقيت محلي</span></div></section>
+    <section class="qma-card qma-adhkar-card" aria-label="الأذكار"><div class="qma-card-head"><span class="qma-icon-btn">‹</span><div><h3>الأذكار</h3><small>لا يزال لسانك رطباً بذكر الله</small></div></div><div class="qma-two-actions"><button class="qma-dua-button is-active"><span class="qma-play-dot">▶</span><span>أذكار الصباح</span></button><button class="qma-dua-button"><span class="qma-play-dot">▶</span><span>أذكار المساء</span></button></div></section>
+  </main><nav class="qma-bottom-nav" aria-label="التنقل الرئيسي"><a href="surah.html"><b aria-hidden="true">۞</b><span>تصفح</span></a><a href="tools.html" aria-current="page"><b aria-hidden="true">▦</b><span>الأدوات</span></a><a href="hadith.html"><b aria-hidden="true">✉</b><span>التنبيهات</span></a><a href="audio.html"><b aria-hidden="true">◖</b><span>الصوتيات</span></a><a href="library.html"><b aria-hidden="true">▰</b><span>المكتبة</span></a></nav>
+  <script src="assets/js/pwa.js" defer></script>
+  <script src="assets/js/mobile-app.js" defer></script>
+  <script src="assets/js/real-features.js" defer></script>
+  <script src="assets/js/qma-reviewed.js" defer></script>
+  <script src="assets/js/qma-final-polish.js" defer></script>
+</body>
+</html>
