@@ -14,7 +14,7 @@
     const keys=[];
     for(let i=0;i<localStorage.length;i++){
       const k=localStorage.key(i);
-      if(k && k.startsWith('qma-page-v2-clean-')) keys.push(k);
+      if(k && k.startsWith('qma-page-v14-clean-')) keys.push(k);
     }
     return keys;
   }
@@ -120,7 +120,7 @@
     let changed=0;
     for(let i=0;i<localStorage.length;i++){
       const key=localStorage.key(i);
-      if(!key||!key.startsWith('qma-page-v2-clean-')) continue;
+      if(!key||!key.startsWith('qma-page-v14-clean-')) continue;
       try{
         const data=JSON.parse(localStorage.getItem(key)||'null');
         if(!data||!Array.isArray(data.ayahs)) continue;

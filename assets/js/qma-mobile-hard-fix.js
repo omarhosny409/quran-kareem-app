@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const BUILD='hard-fix-v13-mobile-icons-ayah-touch-clean';
+  const BUILD='hard-fix-v15-ayah-number-visible';
   const $=(s,c=document)=>c.querySelector(s);
   const $$=(s,c=document)=>Array.from(c.querySelectorAll(s));
   const AR='٠١٢٣٤٥٦٧٨٩';
@@ -13,7 +13,7 @@
       .replace(/[ؐ-ؚۖ-ۭࣔ-ࣿ]/g,'')
       .replace(/[-﷽﴾﴿￼�]/g,'')
       .replace(/[■-◿□▪▫◦●○◆◇■⬚⬛⬜]/g,'')
-      .replace(/[^ء-يً-ٰٟٱیە\s]/g,'')
+      .replace(/[^ء-يً-ٰٟٱیە٠-٩0-9\s]/g,'')
       .replace(/\s+/g,' ')
       .trim();
   }
@@ -35,6 +35,19 @@
     c.querySelectorAll('.qma-ayah-number').forEach(n=>n.remove());
     return cleanText(c.textContent||'');
   }
+  function repairAyahNumbers(scope=document){
+    (scope.querySelectorAll ? scope : document).querySelectorAll('.qma-ayah-inline').forEach((el,idx)=>{
+      let n=el.querySelector('.qma-ayah-number');
+      if(!n){
+        n=document.createElement('span');
+        n.className='qma-ayah-number';
+        el.appendChild(n);
+      }
+      const value=el.dataset.ayah || String(idx+1);
+      if(!n.textContent.trim()) n.textContent=toArabic(value);
+      n.setAttribute('aria-hidden','true');
+    });
+  }
   function hydrateAyahs(){
     $$('.qma-ayah-inline').forEach((el,idx)=>{
       if(!el.dataset.page) el.dataset.page=String(localPage());
@@ -54,20 +67,26 @@
       el.setAttribute('aria-label',`خيارات الآية ${toArabic(el.dataset.ayah)}`);
       el.classList.add('qma-ayah-clickable');
     });
+    repairAyahNumbers(document);
   }
   function deepCleanVisible(){
     $$('.qma-mushaf-text,.qma-result-card p,.qma-reader-article,.qma-tafsir-result').forEach(root=>{
       const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
       const nodes=[];
       while(walker.nextNode()) nodes.push(walker.currentNode);
-      nodes.forEach(n=>{const c=cleanText(n.nodeValue); if(c!==n.nodeValue) n.nodeValue=c;});
+      nodes.forEach(n=>{
+        if(n.parentElement && n.parentElement.closest('.qma-ayah-number,.qma-page-corner,.qma-page-range,.qma-page-pill')) return;
+        const c=cleanText(n.nodeValue);
+        if(c!==n.nodeValue) n.nodeValue=c;
+      });
+      repairAyahNumbers(root);
     });
   }
   function migrateBadCachedPages(){
     try{
       for(let i=0;i<localStorage.length;i++){
         const k=localStorage.key(i);
-        if(!k || !(k.startsWith('qma-page-v1-') || k.startsWith('qma-page-v2-clean-'))) continue;
+        if(!k || !(k.startsWith('qma-page-v1-') || k.startsWith('qma-page-v2-clean-') || k.startsWith('qma-page-v14-clean-'))) continue;
         const raw=localStorage.getItem(k)||'';
         if(!/[\uE000-\uF8FF\uFFFD\u25A0-\u25FF□]/.test(raw)) continue;
         const data=JSON.parse(raw);
@@ -146,19 +165,11 @@
   }
   function ayahFromEvent(e){
     const target=e.target && e.target.nodeType===3 ? e.target.parentElement : e.target;
-    let el=target?.closest?.('.qma-ayah-inline');
-    if(el) return el;
-    const touch=e.changedTouches&&e.changedTouches[0] || e.touches&&e.touches[0];
-    const x=touch?touch.clientX:e.clientX, y=touch?touch.clientY:e.clientY;
-    if(Number.isFinite(x)&&Number.isFinite(y)){
-      const atPoint=document.elementFromPoint(x,y);
-      el=atPoint?.closest?.('.qma-ayah-inline');
-      if(el) return el;
-      const caret=elementFromCaret(x,y);
-      el=caret?.closest?.('.qma-ayah-inline');
-      if(el) return el;
-    }
-    return null;
+    if(!target || !target.closest) return null;
+    if(target.closest('.qma-reader-panel,.qma-reader-actions,.qma-bottom-nav,.qma-topbar,.qma-index-backdrop,.qma-ayah-actions-backdrop,button,a,input,textarea,select,label')) return null;
+    const el=target.closest('.qma-ayah-inline');
+    if(!el || !el.closest('.qma-mushaf-text')) return null;
+    return el;
   }
   function openAyahActions(el){
     hydrateAyahs();
@@ -215,36 +226,58 @@
   function bindAyahPointers(){
     if(document.documentElement.dataset.ayahBound==='1') return;
     document.documentElement.dataset.ayahBound='1';
-    let downTarget=null, downX=0, downY=0, downAt=0;
-    const openFromEvent=(e)=>{
-      if($('.qma-ayah-actions-backdrop')) return false;
-      const raw=e.target && e.target.nodeType===3 ? e.target.parentElement : e.target;
-      if(raw?.closest?.('.qma-reader-panel,.qma-reader-actions,.qma-bottom-nav,.qma-topbar,.qma-index-backdrop,.qma-ayah-actions-backdrop')) return false;
-      const el=ayahFromEvent(e);
-      if(!el) return false;
-      e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+    let active=null;
+    let longTimer=0;
+    let blockSyntheticClickUntil=0;
+    const MOVE_LIMIT=10;
+    const LONG_PRESS_MS=520;
+    const TAP_MAX_MS=420;
+    const clearActive=()=>{
+      if(longTimer){clearTimeout(longTimer); longTimer=0;}
+      active=null;
+    };
+    const openFromActive=(sourceEvent, force=false)=>{
+      if(!active || active.moved || $('.qma-ayah-actions-backdrop')) return false;
+      const el=active.el;
+      if(!el || !document.documentElement.contains(el)) return false;
+      if(sourceEvent){
+        sourceEvent.preventDefault?.();
+        sourceEvent.stopPropagation?.();
+        sourceEvent.stopImmediatePropagation?.();
+      }
+      blockSyntheticClickUntil=Date.now()+900;
       openAyahActions(el);
+      clearActive();
       return true;
     };
     document.addEventListener('pointerdown',e=>{
-      const el=ayahFromEvent(e); if(!el) return;
-      downTarget=el; downX=e.clientX; downY=e.clientY; downAt=Date.now();
+      if(e.pointerType==='mouse' && e.button!==0) return;
+      const el=ayahFromEvent(e);
+      if(!el) return;
+      active={id:e.pointerId,el,x:e.clientX,y:e.clientY,t:Date.now(),moved:false};
+      if(longTimer) clearTimeout(longTimer);
+      longTimer=setTimeout(()=>openFromActive(e,true),LONG_PRESS_MS);
+    },{capture:true,passive:false});
+    document.addEventListener('pointermove',e=>{
+      if(!active || e.pointerId!==active.id) return;
+      const dx=Math.abs((e.clientX||0)-active.x);
+      const dy=Math.abs((e.clientY||0)-active.y);
+      if(dx>MOVE_LIMIT || dy>MOVE_LIMIT){ active.moved=true; clearActive(); }
     },{capture:true,passive:true});
     document.addEventListener('pointerup',e=>{
-      const el=ayahFromEvent(e);
-      if(!el || (downTarget && el!==downTarget)) return;
-      if(Math.abs((e.clientX||0)-downX)>16 || Math.abs((e.clientY||0)-downY)>16) return;
-      if(Date.now()-downAt>900) return;
-      openFromEvent(e);
-      downTarget=null;
+      if(!active || e.pointerId!==active.id) return;
+      const elapsed=Date.now()-active.t;
+      const targetEl=ayahFromEvent(e);
+      const same=targetEl===active.el || active.el.contains(targetEl);
+      if(!active.moved && same && elapsed<=TAP_MAX_MS){ openFromActive(e,false); return; }
+      clearActive();
     },{capture:true,passive:false});
+    ['pointercancel','touchcancel'].forEach(type=>document.addEventListener(type,clearActive,{capture:true,passive:true}));
+    window.addEventListener('scroll',clearActive,{capture:true,passive:true});
     document.addEventListener('click',e=>{
-      if(e.defaultPrevented) return;
-      openFromEvent(e);
-    },{capture:true,passive:false});
-    document.addEventListener('touchend',e=>{
-      if(e.defaultPrevented) return;
-      openFromEvent(e);
+      if(Date.now()<blockSyntheticClickUntil){
+        e.preventDefault(); e.stopPropagation(); if(e.stopImmediatePropagation)e.stopImmediatePropagation();
+      }
     },{capture:true,passive:false});
     ['contextmenu','selectstart','dragstart'].forEach(type=>document.addEventListener(type,e=>{
       const raw=e.target && e.target.nodeType===3 ? e.target.parentElement : e.target;
@@ -289,6 +322,20 @@
     card.innerHTML=`<p>تصميم وبرمجة</p><h2>Omar Hosny</h2><a href="tel:+201210150524">+20 121 015 0524</a><a href="mailto:omarhosny10100@gmail.com">omarhosny10100@gmail.com</a>`;
     panel.appendChild(card);
   }
+  function purgeLegacyPageCacheOnce(){
+    const key='qmaLegacyBadPagesPurgedV14';
+    if(localStorage.getItem(key)===BUILD) return;
+    const prefixes=['qma-page-v1-','qma-page-v2-clean-','qma-page-v3-clean-','qma-page-v13-clean-'];
+    try{
+      const remove=[];
+      for(let i=0;i<localStorage.length;i++){
+        const k=localStorage.key(i);
+        if(k && prefixes.some(p=>k.startsWith(p))) remove.push(k);
+      }
+      remove.forEach(k=>localStorage.removeItem(k));
+      localStorage.setItem(key,BUILD);
+    }catch(e){}
+  }
   function refreshDataStats(){
     const count=$('#qma-cached-pages-count');
     const size=$('#qma-current-storage-size');
@@ -297,7 +344,7 @@
     try{
       for(let i=0;i<localStorage.length;i++){
         const k=localStorage.key(i); const v=localStorage.getItem(k)||'';
-        if(k && (k.startsWith('qma-page-v1-') || k.startsWith('qma-page-v2-clean-'))) pages++;
+        if(k && (k.startsWith('qma-page-v1-') || k.startsWith('qma-page-v2-clean-') || k.startsWith('qma-page-v14-clean-'))) pages++;
         total+=(String(k||'').length+v.length)*2;
       }
     }catch(e){}
@@ -322,6 +369,7 @@
   }
   function init(){
     document.documentElement.setAttribute('data-qma-hard-fix',BUILD);
+    purgeLegacyPageCacheOnce();
     migrateBadCachedPages();
     hydrateAyahs();
     deepCleanVisible();

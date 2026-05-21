@@ -456,7 +456,7 @@
     let count = 0;
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith('qma-page-v2-clean-')) count += 1;
+      if (key && key.startsWith('qma-page-v14-clean-')) count += 1;
     }
     return count;
   }
@@ -474,7 +474,7 @@
     const pages = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith('qma-page-v2-clean-')) {
+      if (key && key.startsWith('qma-page-v14-clean-')) {
         const data = readJson(key);
         if (data && Array.isArray(data.ayahs)) pages.push(...data.ayahs);
       }
@@ -694,7 +694,7 @@
     const ayahs = payload.data.ayahs;
     try {
       const first = ayahs[0] || {};
-      writeJson(`qma-page-v2-clean-${page}`, {
+      writeJson(`qma-page-v14-clean-${page}`, {
         number: Number(page),
         source: 'offline-download',
         juz: first.juz || 1,

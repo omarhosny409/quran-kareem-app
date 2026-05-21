@@ -83,7 +83,7 @@ body.qma-sheet-open .qma-index-body{touch-action:pan-y!important;}
 
 
 /* v13: mobile readability, stable tap actions, and cleaner controls */
-html[data-qma-hard-fix="hard-fix-v13-mobile-icons-ayah-touch-clean"] body{
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] body{
   -webkit-text-size-adjust:100%;
 }
 .qma-svg-icon{width:1.35em;height:1.35em;display:block;margin:auto;color:currentColor;pointer-events:none;}
@@ -133,4 +133,151 @@ html[data-qma-hard-fix="hard-fix-v13-mobile-icons-ayah-touch-clean"] body{
 @media(max-width:370px){
   .qma-mushaf-text{font-size:calc(1.78rem*var(--font-scale-app,1))!important;line-height:2.08!important;}
   .qma-reader-actions{left:22px!important;}
+}
+
+
+/* v14: no accidental ayah sheet while scrolling + tighter mobile layout */
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-mushaf-text{
+  font-size:calc(clamp(1.78rem,7.45vw,2.72rem)*var(--font-scale-app,1))!important;
+  line-height:1.72!important;
+  word-spacing:.015em!important;
+  letter-spacing:0!important;
+  padding-inline:2px!important;
+  text-align:justify!important;
+  text-align-last:center!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-ayah-inline.qma-ayah-clickable{
+  touch-action:pan-y!important;
+  padding:0!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-surah-break{
+  margin:7px auto 5px!important;
+  padding:6px 15px!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-basmala{
+  line-height:1.45!important;
+  margin-bottom:4px!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-mushaf-meta{
+  margin-bottom:8px!important;
+  padding-top:4px!important;
+  padding-bottom:4px!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-mushaf-page{
+  padding-bottom:calc(202px + env(safe-area-inset-bottom))!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-reader-panel{
+  bottom:calc(82px + env(safe-area-inset-bottom))!important;
+  padding:11px 13px!important;
+  border-radius:23px!important;
+  max-height:132px!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-reader-panel__top{
+  font-size:.92rem!important;
+  gap:6px!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-page-pill{
+  padding:6px 18px!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-page-controls{
+  margin-top:7px!important;
+  grid-template-columns:40px 1fr 40px!important;
+  gap:9px!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-page-controls button{
+  width:40px!important;height:40px!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-page-range{gap:5px!important;}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-page-range strong{font-size:1.65rem!important;}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-reader-actions{
+  left:24px!important;
+  bottom:calc(132px + env(safe-area-inset-bottom))!important;
+  gap:6px!important;
+  z-index:101!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-reader-actions button{
+  width:36px!important;height:36px!important;min-width:36px!important;
+  border-radius:14px!important;
+  background:rgba(255,255,255,.96)!important;
+  color:var(--brand-2,#075e47)!important;
+  box-shadow:0 8px 18px rgba(7,58,44,.12)!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-reader-actions .qma-svg-icon{width:20px!important;height:20px!important;}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-bottom-nav{
+  height:66px!important;
+  bottom:calc(8px + env(safe-area-inset-bottom))!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-bottom-nav a{height:50px!important;}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-index-body{
+  padding-bottom:calc(78px + env(safe-area-inset-bottom))!important;
+}
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-index-row,
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-juz-row{
+  min-height:64px!important;
+  margin-bottom:8px!important;
+  border-radius:17px!important;
+}
+@media(max-width:520px){
+  html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-app--mushaf{
+    padding-inline:10px!important;
+    padding-top:calc(env(safe-area-inset-top) + 82px)!important;
+  }
+  html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-mushaf-mini-title{
+    top:calc(env(safe-area-inset-top) + 72px)!important;
+    padding:8px 14px!important;
+    font-size:.9rem!important;
+  }
+  html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-mushaf-text{
+    font-size:calc(clamp(1.72rem,7.65vw,2.36rem)*var(--font-scale-app,1))!important;
+    line-height:1.68!important;
+  }
+  html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-reader-actions{
+    left:20px!important;
+    bottom:calc(128px + env(safe-area-inset-bottom))!important;
+  }
+  html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-reader-actions button{
+    width:34px!important;height:34px!important;min-width:34px!important;
+  }
+}
+@media(max-width:370px){
+  html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-mushaf-text{
+    font-size:calc(1.58rem*var(--font-scale-app,1))!important;
+    line-height:1.64!important;
+  }
+  html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-reader-panel__top{font-size:.8rem!important;}
+}
+
+/* v15: keep ayah numbers visible and prevent text cleaner from wiping them */
+html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-ayah-number{
+  display:inline-grid!important;
+  place-items:center!important;
+  width:1.55em!important;
+  min-width:1.55em!important;
+  height:1.55em!important;
+  margin:0 .16em!important;
+  border-radius:999px!important;
+  border:2px solid #c8b56b!important;
+  background:#fffaf0!important;
+  color:var(--brand-2,#075e47)!important;
+  font-family:Arial,Tahoma,sans-serif!important;
+  font-size:.42em!important;
+  font-weight:900!important;
+  line-height:1!important;
+  vertical-align:middle!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+@media(max-width:520px){
+  html[data-qma-hard-fix="hard-fix-v15-ayah-number-visible"] .qma-ayah-number{
+    width:1.42em!important;
+    min-width:1.42em!important;
+    height:1.42em!important;
+    font-size:.40em!important;
+    margin:0 .12em!important;
+  }
 }

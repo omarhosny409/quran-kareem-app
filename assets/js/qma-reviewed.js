@@ -154,10 +154,10 @@
     if(!ayahs.length) throw new Error('empty');
     const first=ayahs[0];
     const data={number:Number(page),source:'downloaded',juz:first.juz||getJuz(page),ayahs:ayahs.map(a=>({number:a.number,numberInSurah:a.numberInSurah,page:a.page||Number(page),juz:a.juz||first.juz||getJuz(page),surah:{number:a.surah?.number,name:a.surah?.name},text:String(a.text||'').replace(/[\u06D6-\u06ED\u0615-\u061A]/g,'').replace(/[\uE000-\uF8FF]/g,'').replace(/\u25A1|□/g,'').replace(/\s+/g,' ').trim()}))};
-    localStorage.setItem(`qma-page-v2-clean-${page}`,JSON.stringify(data));
+    localStorage.setItem(`qma-page-v14-clean-${page}`,JSON.stringify(data));
     return data;
   }
-  function countSavedPages(){let c=0; for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i); if(k&&k.startsWith('qma-page-v2-clean-')) c++;} return c;}
+  function countSavedPages(){let c=0; for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i); if(k&&k.startsWith('qma-page-v14-clean-')) c++;} return c;}
   function bindOfflineDownload(){
     const btn=$('#qma-download-pages'); if(!btn)return;
     const status=$('#qma-offline-status');
@@ -166,7 +166,7 @@
       btn.disabled=true; btn.textContent=t('downloading');
       let ok=countSavedPages();
       for(let page=1;page<=PAGE_COUNT;page++){
-        if(localStorage.getItem(`qma-page-v2-clean-${page}`)){ if(status && page%20===0) status.textContent=`محفوظ مسبقاً: ${toArabicDigits(ok)} / ٦٠٤`; continue; }
+        if(localStorage.getItem(`qma-page-v14-clean-${page}`)){ if(status && page%20===0) status.textContent=`محفوظ مسبقاً: ${toArabicDigits(ok)} / ٦٠٤`; continue; }
         try{ await cachePage(page); ok++; }catch(err){}
         if(status && (page===1 || page%5===0 || page===PAGE_COUNT)) status.textContent=`${t('downloading')}: ${toArabicDigits(ok)} / ٦٠٤ - ${t('page')} ${toArabicDigits(page)}`;
         await new Promise(r=>setTimeout(r,25));
