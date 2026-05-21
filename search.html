@@ -1,210 +1,23 @@
 <!doctype html>
-<html lang="ar" dir="rtl" data-quran-theme="emerald">
+<html lang="ar" dir="rtl" data-quran-theme="classic">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="موقع قرآن كريم ثابت HTML يضم فهرس السور، قارئ القرآن، البحث، التفسير، وثيمات متعددة.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f8b68">
-  <title>البحث في القرآن الكريم</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="description" content="تطبيق قرآن كريم PWA بواجهة موبايل، قراءة مصحف، أدوات، بحث، صوتيات، مكتبة، وإعدادات أوفلاين.">
+  <title>بحث متقدم | القرآن الكريم</title>
   <link rel="manifest" href="manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="قرآن وحديث">
+  <meta name="apple-mobile-web-app-title" content="قرآن كريم">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/icon-180.png">
-  <link rel="apple-touch-icon" sizes="192x192" href="assets/icons/icon-192.png">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/mobile-app.css">
 </head>
-<body>
-  <header class="quran-site-header" dir="rtl">
-    <div class="quran-container quran-site-header__inner">
-      <a class="quran-site-brand" href="index.html" aria-label="العودة للرئيسية">
-        <span class="quran-site-brand__mark">ق</span>
-        <span><strong>القرآن الكريم</strong><small>قرآن · تفسير · حديث</small></span>
-      </a>
-      <button class="quran-menu-toggle" type="button" aria-controls="quran-site-menu" aria-expanded="false" aria-label="فتح القائمة">
-        <span>القائمة</span>
-        <i></i><i></i><i></i>
-      </button>
-      <nav id="quran-site-menu" class="quran-site-nav" aria-label="روابط الموقع">
-        <a href="index.html">الرئيسية</a>
-        <a href="surah.html">القارئ</a>
-        <a href="search.html" aria-current="page">البحث</a>
-        <a href="tafsir.html">التفسير</a>
-        <a href="hadith.html">الأحاديث</a>
-      </nav>
-    </div>
-    <button class="quran-menu-backdrop" type="button" data-menu-close aria-label="إغلاق القائمة" hidden></button>
-  </header>
-
-  <main id="quran-app" class="quran-app" dir="rtl">
-    <section class="quran-hero" aria-labelledby="quran-title">
-      <div class="quran-hero__glow quran-hero__glow--one"></div>
-      <div class="quran-hero__glow quran-hero__glow--two"></div>
-      <div class="quran-container quran-hero__grid">
-        <div class="quran-hero__content">
-          <span class="quran-kicker">بحث القرآن</span>
-          <h1 id="quran-title">ابحث باسم السورة أو بالكلمة داخل القرآن ثم انتقل مباشرة إلى موضع الآية.</h1>
-          <p>فهرس كامل للسور، قارئ آيات واضح، بحث سريع، تفسير للآية المرتبطة بالكلمة المحددة، وثيمات متعددة بتصميم عربي احترافي.</p>
-          <div class="quran-hero__actions">
-            <a href="#quran-reader" class="quran-btn quran-btn--primary">ابدأ القراءة</a>
-            <a href="#quran-index" class="quran-btn quran-btn--ghost">استعرض الفهرس</a>
-          </div>
-        </div>
-        <aside class="quran-hero__panel" aria-label="إحصاءات القرآن">
-          <div class="quran-basmala">﷽</div>
-          <div class="quran-stat-grid">
-            <div><strong>114</strong><span>سورة</span></div>
-            <div><strong>6236</strong><span>آية</span></div>
-            <div><strong>30</strong><span>جزء</span></div>
-            <div><strong>604</strong><span>صفحة مصحف</span></div>
-          </div>
-          <p>اضغط على أي كلمة داخل الآيات لفتح لوحة التفسير والتحليل.</p>
-        </aside>
-      </div>
-    </section>
-
-    <section class="quran-toolbar" aria-label="إعدادات العرض">
-      <div class="quran-container quran-toolbar__inner">
-        <div class="quran-theme-switcher" role="group" aria-label="اختيار الثيم">
-          <button type="button" data-theme="emerald" class="is-active">زمردي</button>
-          <button type="button" data-theme="midnight">ليلي</button>
-          <button type="button" data-theme="royal">ملكي</button>
-          <button type="button" data-theme="sepia">ورقي</button>
-          <button type="button" data-theme="minimal">فاتح</button>
-        </div>
-        <div class="quran-font-tools" role="group" aria-label="حجم الخط">
-          <button type="button" data-font="decrease">-</button>
-          <span>حجم الخط</span>
-          <button type="button" data-font="increase">+</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="quran-search" class="quran-search-block">
-      <div class="quran-container">
-        <div class="quran-section-heading">
-          <span>بحث القرآن</span>
-          <h2>ابحث باسم السورة أو كلمة داخل القرآن</h2>
-        </div>
-        <div class="quran-search-box">
-          <input id="quran-global-search" type="search" inputmode="search" placeholder="مثال: الرحمن، النور، التقوى..." aria-label="بحث في القرآن">
-          <button id="quran-search-btn" type="button" class="quran-btn quran-btn--primary">بحث</button>
-        </div>
-        <div id="quran-search-results" class="quran-search-results" aria-live="polite"></div>
-      </div>
-    </section>
-
-    <section id="quran-index" class="quran-index-section">
-      <div class="quran-container">
-        <div class="quran-section-heading">
-          <span>الفهرس</span>
-          <h2>كل السور مرتبة مع عدد الآيات ونوع النزول</h2>
-        </div>
-        <div class="quran-index-tools">
-          <input id="quran-surah-filter" type="search" placeholder="فلترة السور بالاسم أو الترتيب..." aria-label="فلترة فهرس السور">
-          <select id="quran-surah-select" aria-label="اختيار سورة"></select>
-        </div>
-        <div id="quran-surah-grid" class="quran-surah-grid" aria-live="polite"></div>
-      </div>
-    </section>
-
-    <section id="quran-reader" class="quran-reader-section">
-      <div class="quran-container quran-reader-layout">
-        <aside class="quran-reader-sidebar">
-          <div class="quran-card quran-current-card">
-            <span>السورة الحالية</span>
-            <h2 id="quran-current-name">الفاتحة</h2>
-            <div id="quran-current-meta" class="quran-current-meta"></div>
-            <button id="quran-reload" type="button" class="quran-btn quran-btn--ghost">إعادة تحميل السورة</button>
-          </div>
-          <div id="quran-mini-index" class="quran-mini-index"></div>
-        </aside>
-
-        <div class="quran-reader-main">
-          <div class="quran-reader-head">
-            <div>
-              <span class="quran-kicker">القارئ</span>
-              <h2 id="quran-reader-title">سورة الفاتحة</h2>
-            </div>
-            <div class="quran-reader-controls">
-              <button id="quran-prev" type="button" aria-label="السورة السابقة">السورة السابقة</button>
-              <button id="quran-next" type="button" aria-label="السورة التالية">السورة التالية</button>
-            </div>
-          </div>
-          <div id="quran-loading" class="quran-loading" hidden>جارِ تحميل الآيات...</div>
-          <div id="quran-ayahs" class="quran-ayahs" aria-live="polite"></div>
-        </div>
-
-        <aside id="quran-tafsir" class="quran-tafsir-panel quran-card">
-          <span class="quran-kicker">تفسير الكلمة</span>
-          <h2>حدد كلمة من الآيات</h2>
-          <p class="quran-muted">سيظهر هنا موضع الكلمة، تحليلها المبسط، الآيات المطابقة داخل السورة، وتفسير الآية المرتبطة بها.</p>
-          <div id="quran-word-detail" class="quran-word-detail"></div>
-        </aside>
-      </div>
-    </section>
-  </main>
-
-  <footer class="quran-site-footer" dir="rtl">
-    <div class="quran-container quran-site-footer__grid">
-      <div><strong>القرآن الكريم</strong><p>موقع ثابت HTML/CSS/JS للقراءة والبحث والتفسير والأحاديث.</p></div>
-      <div><span>التشغيل</span><p>ارفع المجلد كما هو على أي استضافة Static. لا يحتاج WordPress أو قاعدة بيانات.</p></div>
-      <div><span>البيانات</span><p>النص والتفسير يتم جلبهما عند التشغيل من APIs عامة مع تخزين مؤقت داخل المتصفح.</p></div>
-      <div class="quran-credit">
-        <span>تصميم وبرمجة</span>
-        <strong>Omar Hosny</strong>
-        <a href="tel:+201210150524" dir="ltr">01210150524</a>
-        <a href="mailto:omarhosny10100@gmail.com" dir="ltr">omarhosny10100@gmail.com</a>
-      </div>
-    </div>
-  </footer>
-
-  <nav class="quran-mobile-tabbar" aria-label="شريط تطبيق الموبايل">
-    <a class="quran-mobile-tabbar__item" href="index.html">
-      <span class="quran-mobile-tabbar__icon" aria-hidden="true">⌂</span>
-      <span>الرئيسية</span>
-    </a>
-    <a class="quran-mobile-tabbar__item" href="surah.html">
-      <span class="quran-mobile-tabbar__icon" aria-hidden="true">☾</span>
-      <span>القارئ</span>
-    </a>
-    <a class="quran-mobile-tabbar__item" href="search.html" aria-current="page">
-      <span class="quran-mobile-tabbar__icon" aria-hidden="true">⌕</span>
-      <span>البحث</span>
-    </a>
-    <a class="quran-mobile-tabbar__item" href="tafsir.html">
-      <span class="quran-mobile-tabbar__icon" aria-hidden="true">◈</span>
-      <span>التفسير</span>
-    </a>
-    <a class="quran-mobile-tabbar__item" href="hadith.html">
-      <span class="quran-mobile-tabbar__icon" aria-hidden="true">✦</span>
-      <span>الأحاديث</span>
-    </a>
-    <button class="quran-mobile-tabbar__item quran-mobile-theme-toggle" type="button" data-mobile-theme-toggle aria-expanded="false" aria-controls="quran-mobile-theme-panel">
-      <span class="quran-mobile-tabbar__icon" aria-hidden="true">◐</span>
-      <span>الثيم</span>
-    </button>
-    <div id="quran-mobile-theme-panel" class="quran-mobile-theme-panel" hidden>
-      <strong>اختار الثيم والألوان</strong>
-      <div class="quran-mobile-theme-options" role="group" aria-label="اختيار الثيم من شريط الموبايل">
-        <button type="button" data-theme="emerald">زمردي</button>
-        <button type="button" data-theme="midnight">ليلي</button>
-        <button type="button" data-theme="royal">ملكي</button>
-        <button type="button" data-theme="sepia">ورقي</button>
-        <button type="button" data-theme="minimal">فاتح</button>
-      </div>
-    </div>
-  </nav>
-
-  <button id="goToTopBtn" class="go-to-top" type="button" aria-label="الرجوع إلى الأعلى">
-    ↑
-  </button>
-  <script src="assets/js/app.js" defer></script>
-  <script src="assets/js/pwa.js" defer></script>
+<body class="qma-body" data-qma-page="search"><main class="qma-app"><section class="qma-search-shell"><div class="qma-page-title"><div><h1>بحث متقدم</h1></div><a class="qma-round-btn" href="surah.html" aria-label="إغلاق">×</a></div><form class="qma-big-search" id="qma-search-form"><input id="qma-search-input" type="search" placeholder="بحث" autocomplete="off" autofocus><button type="submit" aria-label="بحث">⌕</button></form><div class="qma-search-results" id="qma-search-results"><div class="qma-empty-state">اكتب كلمة أو اسم سورة. البحث يعمل في البيانات المحفوظة أوفلاين، ويستخدم الإنترنت عند توفره للبحث الكامل.</div></div></section></main><nav class="qma-bottom-nav" aria-label="التنقل الرئيسي"><a href="surah.html" aria-current="page"><b aria-hidden="true">۞</b><span>تصفح</span></a><a href="index.html"><b aria-hidden="true">▦</b><span>الأدوات</span></a><a href="hadith.html"><b aria-hidden="true">✉</b><span>التنبيهات</span></a><a href="audio.html"><b aria-hidden="true">◖</b><span>الصوتيات</span></a><a href="library.html"><b aria-hidden="true">▰</b><span>المكتبة</span></a></nav>
+<script src="assets/js/pwa.js" defer></script>
+  <script src="assets/js/mobile-app.js" defer></script>
+  <script src="assets/js/real-features.js" defer></script>
 </body>
 </html>

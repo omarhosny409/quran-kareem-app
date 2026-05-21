@@ -1,9 +1,9 @@
 {
-  "name": "القرآن الكريم - قراءة وتفسير وحديث",
-  "short_name": "قرآن وحديث",
-  "description": "تطبيق ويب للقرآن الكريم: فهرس السور، قارئ، بحث، تفسير، وأحاديث نبوية.",
+  "name": "القرآن الكريم - تطبيق موبايل أوفلاين",
+  "short_name": "قرآن كريم",
+  "description": "قارئ قرآن وواجهة أدوات موبايل مع دعم PWA وأوفلاين.",
   "id": "./",
-  "start_url": "./index.html",
+  "start_url": "./surah.html",
   "scope": "./",
   "display": "standalone",
   "display_override": [
@@ -13,7 +13,7 @@
   "orientation": "portrait-primary",
   "dir": "rtl",
   "lang": "ar",
-  "background_color": "#f6f3ea",
+  "background_color": "#fbf6e8",
   "theme_color": "#0f8b68",
   "categories": [
     "books",
