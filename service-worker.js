@@ -1,4 +1,4 @@
-const CACHE_VERSION='quran-kareem-mobile-app-v12-hard-mobile-fix-ayah-index-dev';
+const CACHE_VERSION='quran-kareem-mobile-app-v13-mobile-icons-ayah-touch-clean';
 const STATIC_CACHE=`${CACHE_VERSION}-static`;
 const RUNTIME_CACHE=`${CACHE_VERSION}-runtime`;
 const AUDIO_CACHE=`${CACHE_VERSION}-audio`;

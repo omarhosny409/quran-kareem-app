@@ -49,7 +49,7 @@
     const h1=$('.qma-page-title h1, .qma-settings-head h1, .qma-search-shell h1'); if(h1&&key) h1.textContent=t(key);
     const topSearch=$('#qma-header-search'); if(topSearch) topSearch.placeholder=t('search');
     const bigSearch=$('#qma-search-input'); if(bigSearch) bigSearch.placeholder=t('search');
-    const nav=[['surah.html','navBrowse'],['index.html','navTools'],['hadith.html','navNotify'],['audio.html','navAudio'],['library.html','navLibrary']];
+    const nav=[['surah.html','navBrowse'],['tools.html','navTools'],['hadith.html','navNotify'],['audio.html','navAudio'],['library.html','navLibrary']];
     $$('.qma-bottom-nav a').forEach(a=>{const href=(a.getAttribute('href')||'').split('?')[0]; const item=nav.find(n=>n[0]===href); const span=$('span',a); if(item&&span) span.textContent=t(item[1]);});
     $$('#qma-language-segment [data-lang], .qma-segment [data-lang]').forEach(b=>b.classList.toggle('is-active', b.dataset.lang===lang));
   }
@@ -118,7 +118,7 @@
     const body=$('.qma-index-body',sheet); const input=$('input',sheet);
     let tab=defaultTab;
     function render(){ if(tab==='surahs') renderIndexList(body,input.value); else if(tab==='juz') renderJuzList(body); else renderSavedList(body); }
-    render(); input.focus({preventScroll:true});
+    render(); setTimeout(()=>{try{$('.qma-index-body',sheet).scrollTop=0;}catch(e){}},0);
     sheet.addEventListener('click',e=>{ if(e.target===sheet || e.target.closest('.qma-index-close')){sheet.remove();document.body.classList.remove('qma-sheet-open');return;} const tabBtn=e.target.closest('[data-tab]'); if(tabBtn){tab=tabBtn.dataset.tab; $$('.qma-index-tabs button',sheet).forEach(b=>b.classList.toggle('is-active',b===tabBtn)); input.value=''; render(); return;} const row=e.target.closest('[data-page]'); if(row){openPage(row.dataset.page,row.dataset.surah);}});
     input.addEventListener('input',()=>{tab='surahs'; $$('.qma-index-tabs button',sheet).forEach(b=>b.classList.toggle('is-active',b.dataset.tab==='surahs')); render();});
   }
@@ -146,18 +146,18 @@
     });
   }
   async function cachePage(page){
-    const url=`${API_PAGE}${page}/quran-uthmani`;
+    const url=`${API_PAGE}${page}/quran-simple-clean`;
     const res=await fetch(url,{headers:{Accept:'application/json'}});
     if(!res.ok) throw new Error('network');
     const json=await res.json();
     const ayahs=json?.data?.ayahs||[];
     if(!ayahs.length) throw new Error('empty');
     const first=ayahs[0];
-    const data={number:Number(page),source:'downloaded',juz:first.juz||getJuz(page),ayahs:ayahs.map(a=>({number:a.number,numberInSurah:a.numberInSurah,page:a.page||Number(page),juz:a.juz||first.juz||getJuz(page),surah:{number:a.surah?.number,name:a.surah?.name},text:a.text}))};
-    localStorage.setItem(`qma-page-v1-${page}`,JSON.stringify(data));
+    const data={number:Number(page),source:'downloaded',juz:first.juz||getJuz(page),ayahs:ayahs.map(a=>({number:a.number,numberInSurah:a.numberInSurah,page:a.page||Number(page),juz:a.juz||first.juz||getJuz(page),surah:{number:a.surah?.number,name:a.surah?.name},text:String(a.text||'').replace(/[\u06D6-\u06ED\u0615-\u061A]/g,'').replace(/[\uE000-\uF8FF]/g,'').replace(/\u25A1|□/g,'').replace(/\s+/g,' ').trim()}))};
+    localStorage.setItem(`qma-page-v2-clean-${page}`,JSON.stringify(data));
     return data;
   }
-  function countSavedPages(){let c=0; for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i); if(k&&k.startsWith('qma-page-v1-')) c++;} return c;}
+  function countSavedPages(){let c=0; for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i); if(k&&k.startsWith('qma-page-v2-clean-')) c++;} return c;}
   function bindOfflineDownload(){
     const btn=$('#qma-download-pages'); if(!btn)return;
     const status=$('#qma-offline-status');
@@ -166,7 +166,7 @@
       btn.disabled=true; btn.textContent=t('downloading');
       let ok=countSavedPages();
       for(let page=1;page<=PAGE_COUNT;page++){
-        if(localStorage.getItem(`qma-page-v1-${page}`)){ if(status && page%20===0) status.textContent=`محفوظ مسبقاً: ${toArabicDigits(ok)} / ٦٠٤`; continue; }
+        if(localStorage.getItem(`qma-page-v2-clean-${page}`)){ if(status && page%20===0) status.textContent=`محفوظ مسبقاً: ${toArabicDigits(ok)} / ٦٠٤`; continue; }
         try{ await cachePage(page); ok++; }catch(err){}
         if(status && (page===1 || page%5===0 || page===PAGE_COUNT)) status.textContent=`${t('downloading')}: ${toArabicDigits(ok)} / ٦٠٤ - ${t('page')} ${toArabicDigits(page)}`;
         await new Promise(r=>setTimeout(r,25));

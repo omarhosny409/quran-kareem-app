@@ -258,7 +258,7 @@
     }
 
     const endpoints = [
-      `${API.quranCloud}/surah/${number}/quran-uthmani`,
+      `${API.quranCloud}/surah/${number}/quran-simple-clean`,
       `${API.quranCloud}/surah/${number}/ar.alafasy`
     ];
 
@@ -675,7 +675,7 @@
     `).join('');
 
     try {
-      const endpoint = `${API.quranCloud}/search/${encodeURIComponent(rawQuery)}/all/quran-uthmani`;
+      const endpoint = `${API.quranCloud}/search/${encodeURIComponent(rawQuery)}/all/quran-simple-clean`;
       const response = await fetch(endpoint, { headers: { Accept: 'application/json' } });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload = await response.json();
