@@ -2,14 +2,14 @@
   "name": "القرآن الكريم - تطبيق موبايل أوفلاين",
   "short_name": "قرآن كريم",
   "description": "قارئ قرآن وواجهة أدوات موبايل مع دعم PWA وأوفلاين.",
-  "id": "./",
-  "start_url": "./surah.html",
+  "id": "./surah.html",
+  "start_url": "./surah.html?source=pwa",
   "scope": "./",
-  "display": "browser",
+  "display": "standalone",
   "display_override": [
-    "browser",
+    "standalone",
     "minimal-ui",
-    "standalone"
+    "browser"
   ],
   "orientation": "portrait-primary",
   "dir": "rtl",
@@ -101,5 +101,6 @@
       "url": "./hadith.html",
       "description": "فتح قسم الأحاديث"
     }
-  ]
+  ],
+  "prefer_related_applications": false
 }

@@ -1,4 +1,4 @@
-const CACHE_VERSION='quran-kareem-mobile-app-v16-reader-search-fixed';
+const CACHE_VERSION='quran-kareem-mobile-app-v17-final-mobile-search-install';
 const STATIC_CACHE=`${CACHE_VERSION}-static`;
 const RUNTIME_CACHE=`${CACHE_VERSION}-runtime`;
 const AUDIO_CACHE=`${CACHE_VERSION}-audio`;
