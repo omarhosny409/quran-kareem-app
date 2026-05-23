@@ -1,426 +1,282 @@
-(function () {
+(function(){
   'use strict';
-
-  const HADITH_CDN = 'https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/';
-
-  const HADITH_BOOKS = [
-    { id: 'bukhari', title: 'صحيح البخاري', edition: 'ara-bukhari', minEdition: 'ara-bukhari.min', note: 'من أصح كتب الحديث، يحتوي على أبواب كثيرة وترقيم تفصيلي.' },
-    { id: 'muslim', title: 'صحيح مسلم', edition: 'ara-muslim', minEdition: 'ara-muslim.min', note: 'أحد الصحيحين، مرتب على الكتب والأبواب.' },
-    { id: 'abudawud', title: 'سنن أبي داود', edition: 'ara-abudawud', minEdition: 'ara-abudawud.min', note: 'من كتب السنن، غني بأحاديث الأحكام.' },
-    { id: 'tirmidhi', title: 'جامع الترمذي', edition: 'ara-tirmidhi', minEdition: 'ara-tirmidhi.min', note: 'يتضمن أحكامًا على كثير من الأحاديث عند توفرها.' },
-    { id: 'nasai', title: 'سنن النسائي', edition: 'ara-nasai', minEdition: 'ara-nasai.min', note: 'من دواوين السنن المشهورة.' },
-    { id: 'ibnmajah', title: 'سنن ابن ماجه', edition: 'ara-ibnmajah', minEdition: 'ara-ibnmajah.min', note: 'من الكتب الستة عند جمهور المتأخرين.' },
-    { id: 'malik', title: 'موطأ مالك', edition: 'ara-malik', minEdition: 'ara-malik.min', note: 'من أقدم كتب الحديث والفقه.' },
-    { id: 'nawawi', title: 'الأربعون النووية', edition: 'ara-nawawi', minEdition: 'ara-nawawi.min', note: 'مختصر تعليمي مشهور في جوامع الكلم.' },
-    { id: 'qudsi', title: 'الأحاديث القدسية', edition: 'ara-qudsi', minEdition: 'ara-qudsi.min', note: 'مجموعة أحاديث قدسية بحسب المصدر المتاح.' },
-    { id: 'dehlawi', title: 'حجة الله البالغة', edition: 'ara-dehlawi', minEdition: 'ara-dehlawi.min', note: 'مصدر إضافي عند توفر الملف العربي.' }
-  ];
-
-  const state = {
-    activeBookId: localStorage.getItem('hadithActiveBook') || 'bukhari',
-    payloads: new Map(),
-    currentItems: [],
-    visibleItems: [],
-    sections: [],
-    page: 1,
-    pageSize: 20,
-    query: '',
-    fontScale: Number(localStorage.getItem('quranFontScale') || '1')
-  };
-
-  const $ = (selector, context = document) => context.querySelector(selector);
-  const $$ = (selector, context = document) => Array.from(context.querySelectorAll(selector));
-
-  function escapeHtml(value) {
-    return String(value || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+  const $=(s,c=document)=>c.querySelector(s);
+  const $$=(s,c=document)=>Array.from(c.querySelectorAll(s));
+  const ar='٠١٢٣٤٥٦٧٨٩';
+  function toArabic(v){return String(v).replace(/\d/g,d=>ar[Number(d)]);}
+  function bytes(n){
+    if(!Number.isFinite(n)) return '—';
+    if(n<1024) return `${n} B`;
+    if(n<1024*1024) return `${Math.round(n/1024)} KB`;
+    return `${(n/1024/1024).toFixed(1)} MB`;
   }
-
-  function stripHtml(value) {
-    const node = document.createElement('div');
-    node.innerHTML = String(value || '');
-    return node.textContent || node.innerText || '';
+  function pageCacheKeys(){
+    const keys=[];
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(k && k.startsWith('qma-page-v14-clean-')) keys.push(k);
+    }
+    return keys;
   }
-
-  function normalizeArabic(value) {
-    return String(value || '')
-      .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, '')
-      .replace(/[إأآٱ]/g, 'ا')
-      .replace(/ى/g, 'ي')
-      .replace(/ؤ/g, 'و')
-      .replace(/ئ/g, 'ي')
-      .replace(/ة/g, 'ه')
-      .replace(/ـ/g, '')
-      .replace(/[٠-٩]/g, digit => '٠١٢٣٤٥٦٧٨٩'.indexOf(digit))
-      .replace(/[\s\p{P}\p{S}]+/gu, ' ')
-      .trim()
-      .toLowerCase();
+  function storageSize(){
+    let total=0;
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      const v=localStorage.getItem(k)||'';
+      total += (k.length + v.length) * 2;
+    }
+    return total;
   }
-
-  function escapeRegExp(value) {
-    return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  function refreshDataStats(){
+    const count=$('#qma-cached-pages-count');
+    const size=$('#qma-current-storage-size');
+    if(count) count.textContent=toArabic(pageCacheKeys().length);
+    if(size) size.textContent=bytes(storageSize());
   }
-
-  function setStatus(message, isError) {
-    const node = $('#hadith-status');
-    if (!node) return;
-    node.textContent = message;
-    node.classList.toggle('quran-error', Boolean(isError));
+  function toast(msg){
+    let n=$('.qma-toast-reviewed') || $('.qma-toast');
+    if(n) n.remove();
+    n=document.createElement('div');
+    n.className='qma-toast-reviewed';
+    n.textContent=msg;
+    document.body.appendChild(n);
+    setTimeout(()=>n.remove(),2200);
   }
-
-  function getBook(bookId) {
-    return HADITH_BOOKS.find(book => book.id === bookId) || HADITH_BOOKS[0];
+  function cleanVisibleQuran(){
+    $$('.qma-mushaf-text,.qma-result-card p').forEach(node=>{
+      node.childNodes.forEach(child=>{
+        if(child.nodeType===Node.TEXT_NODE){
+          child.nodeValue=child.nodeValue.replace(/[\u06D6-\u06ED\u0615-\u061A]/g,'').replace(/[\uE000-\uF8FF]/g,'').replace(/\u25A1|□/g,'');
+        }
+      });
+    });
   }
-
-  function getBookUrl(book) {
-    return `${HADITH_CDN}${book.minEdition || `${book.edition}.min`}.json`;
+  function bindSettingsData(){
+    if(document.body.dataset.qmaPage!=='settings') return;
+    refreshDataStats();
+    $('#qma-clear-quran-cache')?.addEventListener('click',e=>{
+      e.preventDefault();
+      const keys=pageCacheKeys();
+      keys.forEach(k=>localStorage.removeItem(k));
+      refreshDataStats();
+      toast(`تم مسح ${toArabic(keys.length)} صفحة محفوظة`);
+    });
+    $('#qma-reset-preferences')?.addEventListener('click',e=>{
+      e.preventDefault();
+      ['qmaLang','quranTheme','qmaFontScale','qmaReviewedSettings'].forEach(k=>localStorage.removeItem(k));
+      toast('تمت إعادة ضبط الإعدادات');
+      setTimeout(()=>location.reload(),500);
+    });
+    const dl=$('#qma-download-pages');
+    if(dl){
+      const mo=new MutationObserver(refreshDataStats);
+      const st=$('#qma-offline-status');
+      if(st) mo.observe(st,{childList:true,subtree:true,characterData:true});
+      dl.addEventListener('click',()=>setTimeout(refreshDataStats,1000));
+    }
   }
-
-  function setTheme(theme) {
-    const selected = theme || localStorage.getItem('quranTheme') || 'emerald';
-    document.documentElement.setAttribute('data-quran-theme', selected);
-    localStorage.setItem('quranTheme', selected);
-    $$('[data-theme]').forEach(button => button.classList.toggle('is-active', button.dataset.theme === selected));
+  function bindOpenAtBrowse(){
+    // Keep any internal home links opening the reader, while the Tools tab opens tools.html.
+    $$('a[href="index.html"]').forEach(a=>a.setAttribute('href','surah.html'));
+    $$('.qma-bottom-nav a').forEach(a=>{
+      const href=(a.getAttribute('href')||'').split('?')[0];
+      if(href==='tools.html' && document.body.dataset.qmaPage==='tools') a.setAttribute('aria-current','page');
+    });
   }
-
-  function setFontScale(scale) {
-    state.fontScale = Math.min(1.45, Math.max(0.82, Number(scale.toFixed(2))));
-    document.documentElement.style.setProperty('--quran-font-scale', state.fontScale);
-    localStorage.setItem('quranFontScale', String(state.fontScale));
+  function init(){
+    bindOpenAtBrowse();
+    bindSettingsData();
+    cleanVisibleQuran();
+    setTimeout(cleanVisibleQuran,800);
+    document.addEventListener('qma-page-rendered',cleanVisibleQuran);
   }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
 
-  function extractHadiths(payload) {
-    if (!payload) return [];
-    if (Array.isArray(payload)) return payload;
-    if (Array.isArray(payload.hadiths)) return payload.hadiths;
-    if (Array.isArray(payload.hadith)) return payload.hadith;
-    if (Array.isArray(payload.data)) return payload.data;
-    if (payload.data && Array.isArray(payload.data.hadiths)) return payload.data.hadiths;
-    if (payload.collection && Array.isArray(payload.collection)) return payload.collection;
-    return [];
+(function(){
+  'use strict';
+  const $=(s,c=document)=>c.querySelector(s);
+  const $$=(s,c=document)=>Array.from(c.querySelectorAll(s));
+  const arDigits='٠١٢٣٤٥٦٧٨٩';
+  const toArabic=v=>String(v).replace(/\d/g,d=>arDigits[Number(d)]);
+  function sanitizeQuranText(value){
+    return String(value||'').normalize('NFC')
+      .replace(/[\u0610-\u061A\u06D6-\u06ED\u08D4-\u08FF]/g,'')
+      .replace(/[\uE000-\uF8FF\uFDFD\uFD3E\uFD3F\uFFFC\uFFFD]/g,'')
+      .replace(/[\u25A0-\u25FF□▪▫◦●○◆◇■]/g,'')
+      .replace(/\s+/g,' ')
+      .trim();
   }
-
-  function extractSections(payload) {
-    const sources = [
-      payload && payload.metadata && payload.metadata.sections,
-      payload && payload.sections,
-      payload && payload.metadata && payload.metadata.section_details,
-      payload && payload.section_details
-    ].filter(Boolean);
-
-    for (const source of sources) {
-      if (Array.isArray(source)) {
-        return source.map((item, index) => ({
-          id: String(item.id || item.number || item.section || index + 1),
-          name: item.name || item.title || item.arabic || item.english || `باب ${index + 1}`
-        }));
+  function toast(msg){
+    let n=$('.qma-toast-reviewed')||$('.qma-toast');
+    if(n)n.remove();
+    n=document.createElement('div');
+    n.className='qma-toast-reviewed';
+    n.textContent=msg;
+    document.body.appendChild(n);
+    setTimeout(()=>n.remove(),2300);
+  }
+  function migrateCachedQuranText(){
+    let changed=0;
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i);
+      if(!key||!key.startsWith('qma-page-v14-clean-')) continue;
+      try{
+        const data=JSON.parse(localStorage.getItem(key)||'null');
+        if(!data||!Array.isArray(data.ayahs)) continue;
+        let dirty=false;
+        data.ayahs.forEach(a=>{
+          const clean=sanitizeQuranText(a.text);
+          if(clean!==a.text){a.text=clean;dirty=true;}
+        });
+        if(dirty){localStorage.setItem(key,JSON.stringify(data));changed++;}
+      }catch(e){}
+    }
+    return changed;
+  }
+  function cleanVisibleText(){
+    $$('.qma-mushaf-text,.qma-result-card p,.qma-reader-article,.qma-tafsir-result').forEach(root=>{
+      const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+      const nodes=[];
+      while(walker.nextNode()) nodes.push(walker.currentNode);
+      nodes.forEach(node=>{
+        const clean=sanitizeQuranText(node.nodeValue);
+        if(clean!==node.nodeValue) node.nodeValue=clean;
+      });
+    });
+  }
+  function ayahPlainText(el){
+    const clone=el.cloneNode(true);
+    clone.querySelectorAll('.qma-ayah-number').forEach(n=>n.remove());
+    return sanitizeQuranText(clone.textContent||'');
+  }
+  function closeAyahSheet(){
+    $('.qma-ayah-actions-backdrop')?.remove();
+    $$('.qma-ayah-inline.is-selected').forEach(x=>x.classList.remove('is-selected'));
+  }
+  async function copyText(text){
+    try{
+      if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);}
+      else{
+        const ta=document.createElement('textarea');
+        ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
       }
-      if (typeof source === 'object') {
-        return Object.entries(source).map(([id, value]) => ({
-          id: String(id),
-          name: typeof value === 'string' ? value : (value.name || value.title || value.arabic || value.english || `باب ${id}`)
-        }));
+      toast('تم النسخ');
+    }catch(e){toast('تعذر النسخ من المتصفح');}
+  }
+  function saveAyah(info){
+    let saved=[];
+    try{saved=JSON.parse(localStorage.getItem('qmaSavedAyahs')||'[]')||[];}catch(e){}
+    const key=`${info.surah}:${info.ayah}`;
+    saved=saved.filter(x=>`${x.surah}:${x.ayah}`!==key);
+    saved.unshift({surah:info.surah,ayah:info.ayah,page:info.page,text:info.text,createdAt:new Date().toISOString()});
+    localStorage.setItem('qmaSavedAyahs',JSON.stringify(saved.slice(0,200)));
+    toast('تم حفظ الآية في العلامات');
+  }
+  function openAyahActions(el){
+    closeAyahSheet();
+    el.classList.add('is-selected');
+    const info={
+      surah:Number(el.dataset.surah||0),
+      ayah:Number(el.dataset.ayah||0),
+      page:Number(el.dataset.page||localStorage.getItem('qmaCurrentPage')||0),
+      text:ayahPlainText(el)
+    };
+    const sheet=document.createElement('div');
+    sheet.className='qma-ayah-actions-backdrop';
+    sheet.innerHTML=`<section class="qma-ayah-actions" role="dialog" aria-modal="true" aria-label="خيارات الآية">
+      <h3>سورة ${toArabic(info.surah)} - آية ${toArabic(info.ayah)}</h3>
+      <p>${info.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>
+      <div class="qma-ayah-actions-grid">
+        <button class="is-primary" type="button" data-act="tafsir">تفسير</button>
+        <button type="button" data-act="copy">نسخ</button>
+        <button type="button" data-act="share">مشاركة</button>
+        <button type="button" data-act="bookmark">حفظ علامة</button>
+        <button type="button" data-act="open">فتح الصفحة</button>
+        <button class="is-danger" type="button" data-act="close">إغلاق</button>
+      </div>
+    </section>`;
+    document.body.appendChild(sheet);
+    sheet.addEventListener('click',async e=>{
+      if(e.target===sheet){closeAyahSheet();return;}
+      const btn=e.target.closest('[data-act]');
+      if(!btn)return;
+      const act=btn.dataset.act;
+      if(act==='close'){closeAyahSheet();return;}
+      if(act==='tafsir'){location.href=`tafsir.html?surah=${encodeURIComponent(info.surah)}&ayah=${encodeURIComponent(info.ayah)}`;return;}
+      if(act==='open'){location.href=`surah.html?page=${encodeURIComponent(info.page)}&surah=${encodeURIComponent(info.surah)}&ayah=${encodeURIComponent(info.ayah)}`;return;}
+      if(act==='bookmark'){saveAyah(info);closeAyahSheet();return;}
+      if(act==='copy'){await copyText(`${info.text} [${info.surah}:${info.ayah}]`);closeAyahSheet();return;}
+      if(act==='share'){
+        const payload={title:`آية ${info.surah}:${info.ayah}`,text:`${info.text} [${info.surah}:${info.ayah}]`};
+        try{if(navigator.share) await navigator.share(payload); else await copyText(payload.text);}catch(e){}
+        closeAyahSheet();return;
       }
-    }
-    return [];
-  }
-
-  function getHadithText(item) {
-    const text = item.text || item.arabic || item.hadithArabic || item.hadeeth || item.hadith || item.body || item.content || '';
-    return stripHtml(text).trim();
-  }
-
-  function getHadithNumber(item, index) {
-    return item.hadithnumber || item.hadithNumber || item.arabicnumber || item.number || item.id || item.reference?.hadith || index + 1;
-  }
-
-  function getSectionId(item) {
-    return String(item.reference?.book || item.book || item.section || item.section_id || item.chapter || item.chapterId || item.book_number || '');
-  }
-
-  function getGrade(item) {
-    if (typeof item.grade === 'string') return item.grade;
-    if (typeof item.status === 'string') return item.status;
-    if (Array.isArray(item.grades) && item.grades.length) {
-      return item.grades.map(grade => grade.grade || grade.name || grade).filter(Boolean).join(' · ');
-    }
-    if (item.classification) return item.classification;
-    return '';
-  }
-
-  function getReference(item) {
-    const parts = [];
-    if (item.reference?.book) parts.push(`كتاب ${item.reference.book}`);
-    if (item.reference?.hadith) parts.push(`حديث ${item.reference.hadith}`);
-    if (item.bookSlug) parts.push(item.bookSlug);
-    if (item.arabicnumber) parts.push(`رقم عربي ${item.arabicnumber}`);
-    return parts.join(' · ');
-  }
-
-  function getSectionName(sectionId) {
-    const found = state.sections.find(section => String(section.id) === String(sectionId));
-    return found ? found.name : '';
-  }
-
-  function enrichItems(items, book) {
-    return items.map((item, index) => {
-      const sectionId = getSectionId(item);
-      return {
-        raw: item,
-        bookId: book.id,
-        bookTitle: book.title,
-        number: getHadithNumber(item, index),
-        sectionId,
-        sectionName: getSectionName(sectionId),
-        text: getHadithText(item),
-        grade: getGrade(item),
-        reference: getReference(item)
-      };
-    }).filter(item => item.text);
-  }
-
-  async function fetchBook(bookId) {
-    const book = getBook(bookId);
-    if (state.payloads.has(book.id)) return state.payloads.get(book.id);
-
-    const response = await fetch(getBookUrl(book), { headers: { Accept: 'application/json' } });
-    if (!response.ok) throw new Error(`تعذر تحميل ${book.title}`);
-    const payload = await response.json();
-    state.payloads.set(book.id, payload);
-    return payload;
-  }
-
-  function renderBooks() {
-    const list = $('#hadith-book-list');
-    const select = $('#hadith-book-select');
-    if (select) {
-      select.innerHTML = HADITH_BOOKS.map(book => `<option value="${book.id}">${escapeHtml(book.title)}</option>`).join('');
-      select.value = state.activeBookId;
-    }
-    if (!list) return;
-    list.innerHTML = HADITH_BOOKS.map(book => `
-      <button type="button" class="hadith-book-button ${book.id === state.activeBookId ? 'is-active' : ''}" data-hadith-book="${book.id}">
-        <strong>${escapeHtml(book.title)}</strong>
-        <span>${escapeHtml(book.note)}</span>
-      </button>
-    `).join('');
-  }
-
-  function renderSections() {
-    const select = $('#hadith-section-select');
-    if (!select) return;
-    const options = ['<option value="all">كل الأبواب</option>'].concat(
-      state.sections.map(section => `<option value="${escapeHtml(section.id)}">${escapeHtml(section.name)}</option>`)
-    );
-    select.innerHTML = options.join('');
-  }
-
-  function highlight(text, query) {
-    const escaped = escapeHtml(text);
-    const raw = String(query || '').trim();
-    if (!raw) return escaped;
-    try {
-      return escaped.replace(new RegExp(escapeRegExp(escapeHtml(raw)), 'gi'), match => `<mark>${match}</mark>`);
-    } catch (error) {
-      return escaped;
-    }
-  }
-
-  function applyFilters(resetPage) {
-    const sectionValue = $('#hadith-section-select')?.value || 'all';
-    const normalizedQuery = normalizeArabic(state.query);
-    state.visibleItems = state.currentItems.filter(item => {
-      const sectionOk = sectionValue === 'all' || String(item.sectionId) === String(sectionValue);
-      const queryOk = !normalizedQuery || normalizeArabic(`${item.text} ${item.bookTitle} ${item.sectionName} ${item.number}`).includes(normalizedQuery);
-      return sectionOk && queryOk;
     });
-    if (resetPage) state.page = 1;
-    renderHadiths();
   }
-
-  function renderHadiths() {
-    const output = $('#hadith-results');
-    const title = $('#hadith-current-title');
-    const pageLabel = $('#hadith-page-label');
-    if (!output) return;
-
-    const total = state.visibleItems.length;
-    const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
-    state.page = Math.min(Math.max(1, state.page), totalPages);
-    const start = (state.page - 1) * state.pageSize;
-    const pageItems = state.visibleItems.slice(start, start + state.pageSize);
-
-    if (title) {
-      const book = getBook(state.activeBookId);
-      title.textContent = total ? `${book.title} · ${total.toLocaleString('ar-EG')} حديث` : `${book.title} · لا توجد نتائج`;
-    }
-    if (pageLabel) pageLabel.textContent = `صفحة ${state.page.toLocaleString('ar-EG')} من ${totalPages.toLocaleString('ar-EG')}`;
-    $('#hadith-prev-page')?.toggleAttribute('disabled', state.page <= 1);
-    $('#hadith-next-page')?.toggleAttribute('disabled', state.page >= totalPages);
-
-    if (!pageItems.length) {
-      output.innerHTML = '<div class="hadith-empty">لا توجد أحاديث مطابقة للفلتر الحالي.</div>';
-      return;
-    }
-
-    output.innerHTML = pageItems.map(item => `
-      <article class="hadith-item">
-        <div class="hadith-item__meta">
-          <span>${escapeHtml(item.bookTitle)}</span>
-          <span>رقم ${escapeHtml(item.number)}</span>
-          ${item.sectionName ? `<span>${escapeHtml(item.sectionName)}</span>` : ''}
-          ${item.grade ? `<span class="hadith-grade">${escapeHtml(item.grade)}</span>` : ''}
-        </div>
-        <p class="hadith-item__text">${highlight(item.text, state.query)}</p>
-        ${item.reference ? `<div class="hadith-reference">${escapeHtml(item.reference)}</div>` : ''}
-      </article>
-    `).join('');
+  function bindAyahActions(){
+    // Disabled here. The stronger mobile handler in qma-mobile-hard-fix.js handles ayah taps reliably on touch devices.
   }
-
-  async function loadBook(bookId, showStatus) {
-    const book = getBook(bookId || state.activeBookId);
-    state.activeBookId = book.id;
-    localStorage.setItem('hadithActiveBook', book.id);
-    renderBooks();
-    if ($('#hadith-book-select')) $('#hadith-book-select').value = book.id;
-    if (showStatus) setStatus(`جارِ تحميل ${book.title}...`);
-
-    try {
-      const payload = await fetchBook(book.id);
-      state.sections = extractSections(payload);
-      renderSections();
-      state.currentItems = enrichItems(extractHadiths(payload), book);
-      state.query = '';
-      if ($('#hadith-query')) $('#hadith-query').value = '';
-      state.visibleItems = state.currentItems.slice();
-      state.page = 1;
-      setStatus(`تم تحميل ${book.title}: ${state.currentItems.length.toLocaleString('ar-EG')} حديث.`);
-      renderHadiths();
-    } catch (error) {
-      state.sections = [];
-      state.currentItems = [];
-      state.visibleItems = [];
-      renderSections();
-      renderHadiths();
-      setStatus(`فشل تحميل ${book.title}. تحقق من اتصال الإنترنت أو جرّب كتابًا آخر.`, true);
-    }
-  }
-
-  async function searchAllBooks(rawQuery) {
-    const normalizedQuery = normalizeArabic(rawQuery);
-    if (!normalizedQuery || normalizedQuery.length < 2) {
-      setStatus('اكتب حرفين على الأقل للبحث.', true);
-      return;
-    }
-
-    state.query = rawQuery;
-    state.visibleItems = [];
-    state.currentItems = [];
-    state.page = 1;
-    renderHadiths();
-
-    const matches = [];
-    for (let index = 0; index < HADITH_BOOKS.length; index += 1) {
-      const book = HADITH_BOOKS[index];
-      setStatus(`بحث شامل: تحميل ${book.title} (${index + 1}/${HADITH_BOOKS.length})...`);
-      try {
-        const payload = await fetchBook(book.id);
-        const previousSections = state.sections;
-        state.sections = extractSections(payload);
-        const items = enrichItems(extractHadiths(payload), book);
-        state.sections = previousSections;
-        matches.push(...items.filter(item => normalizeArabic(`${item.text} ${item.bookTitle} ${item.sectionName} ${item.number}`).includes(normalizedQuery)));
-        state.currentItems = matches;
-        state.visibleItems = matches.slice(0, 500);
-        renderHadiths();
-      } catch (error) {
-        // Continue searching remaining books.
+  function improveIndexSheet(){
+    const apply=sheet=>{
+      const body=$('.qma-index-body',sheet);
+      if(body){
+        body.scrollTop=0;
+        body.style.overscrollBehavior='contain';
       }
+      const input=$('.qma-index-search input',sheet);
+      if(input){
+        input.autocomplete='off';
+        input.addEventListener('input',()=>setTimeout(()=>{const b=$('.qma-index-body',sheet); if(b)b.scrollTop=0;},0));
+      }
+      $$('.qma-index-tabs button',sheet).forEach(btn=>btn.addEventListener('click',()=>setTimeout(()=>{const b=$('.qma-index-body',sheet); if(b)b.scrollTop=0;},0)));
+    };
+    const mo=new MutationObserver(muts=>muts.forEach(m=>m.addedNodes.forEach(node=>{
+      if(node.nodeType===1 && node.matches?.('.qma-index-backdrop')) apply(node);
+    })));
+    mo.observe(document.body,{childList:true});
+  }
+
+  function bindReaderModeButton(){
+    const btn=$('#qma-reader-mode');
+    if(!btn)return;
+    btn.addEventListener('click',e=>{
+      e.preventDefault();
+      document.body.classList.toggle('qma-reader-clean');
+      const on=document.body.classList.contains('qma-reader-clean');
+      btn.textContent=on?'□':'▯';
+      toast(on?'تم تفعيل وضع القراءة الصافي':'تم إظهار عناصر التحكم');
+    },true);
+  }
+  function bindTafsirParams(){
+    if(document.body.dataset.qmaPage!=='tafsir')return;
+    const params=new URLSearchParams(location.search);
+    const surah=params.get('surah'), ayah=params.get('ayah');
+    if(!surah||!ayah)return;
+    setTimeout(()=>{
+      const s=$('#qma-tafsir-surah'), a=$('#qma-tafsir-ayah'), form=$('#qma-tafsir-form');
+      if(s)s.value=String(surah);
+      if(a)a.value=String(ayah);
+      if(form)form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
+    },120);
+  }
+  function forceBrowseAsHome(){
+    if(location.pathname.endsWith('/index.html')||location.pathname==='/'||location.pathname.endsWith('/')){
+      // index.html already redirects. This keeps any cached shell pointing to the Browse reader.
+      const current=localStorage.getItem('qmaCurrentPage')||'149';
+      if(!location.pathname.endsWith('/surah.html')) location.replace(`surah.html?page=${encodeURIComponent(current)}`);
     }
-
-    state.currentItems = matches;
-    state.visibleItems = matches.slice(0, 500);
-    if (matches.length > 500) {
-      setStatus(`تم العثور على ${matches.length.toLocaleString('ar-EG')} نتيجة. تم عرض أول 500 نتيجة لتخفيف الصفحة.`);
-    } else {
-      setStatus(`انتهى البحث الشامل: ${matches.length.toLocaleString('ar-EG')} نتيجة.`);
-    }
-    renderHadiths();
   }
-
-  async function runSearch() {
-    const rawQuery = $('#hadith-query')?.value.trim() || '';
-    const scope = $('#hadith-search-scope')?.value || 'current';
-    if (rawQuery.length < 2) {
-      state.query = '';
-      applyFilters(true);
-      setStatus('اكتب حرفين على الأقل للبحث، أو اترك الحقل فارغًا لعرض الكتاب كاملًا.');
-      return;
-    }
-
-    if (scope === 'all') {
-      await searchAllBooks(rawQuery);
-      return;
-    }
-
-    if (!state.currentItems.length) await loadBook(state.activeBookId, true);
-    state.query = rawQuery;
-    applyFilters(true);
-    setStatus(`نتائج البحث داخل الكتاب الحالي: ${state.visibleItems.length.toLocaleString('ar-EG')}.`);
+  function init(){
+    migrateCachedQuranText();
+    cleanVisibleText();
+    bindAyahActions();
+    bindReaderModeButton();
+    improveIndexSheet();
+    bindTafsirParams();
+    forceBrowseAsHome();
+    document.addEventListener('qma-page-rendered',()=>{cleanVisibleText();});
+    setTimeout(cleanVisibleText,900);
   }
-
-  function bindEvents() {
-    $$('[data-theme]').forEach(button => button.addEventListener('click', () => setTheme(button.dataset.theme)));
-    $$('[data-font]').forEach(button => {
-      button.addEventListener('click', () => setFontScale(state.fontScale + (button.dataset.font === 'increase' ? 0.08 : -0.08)));
-    });
-
-    $('#hadith-book-list')?.addEventListener('click', event => {
-      const button = event.target.closest('[data-hadith-book]');
-      if (!button) return;
-      loadBook(button.dataset.hadithBook, true);
-    });
-
-    $('#hadith-book-select')?.addEventListener('change', event => {
-      state.activeBookId = event.target.value;
-      renderBooks();
-      setStatus(`تم اختيار ${getBook(state.activeBookId).title}. اضغط تحميل الكتاب.`);
-    });
-
-    $('#hadith-load-book')?.addEventListener('click', () => loadBook(state.activeBookId, true));
-    $('#hadith-section-select')?.addEventListener('change', () => applyFilters(true));
-    $('#hadith-search-btn')?.addEventListener('click', runSearch);
-    $('#hadith-query')?.addEventListener('keydown', event => {
-      if (event.key === 'Enter') runSearch();
-    });
-    $('#hadith-prev-page')?.addEventListener('click', () => {
-      state.page -= 1;
-      renderHadiths();
-      $('#hadith-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-    $('#hadith-next-page')?.addEventListener('click', () => {
-      state.page += 1;
-      renderHadiths();
-      $('#hadith-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  }
-
-  function init() {
-    if (!$('#hadith-app')) return;
-    setTheme();
-    setFontScale(state.fontScale);
-    renderBooks();
-    bindEvents();
-    setStatus(`جاهز. الكتاب المختار: ${getBook(state.activeBookId).title}.`);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();

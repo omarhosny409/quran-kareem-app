@@ -1,140 +1,426 @@
+(function () {
+  'use strict';
 
-(function(){'use strict';
-const SURAHS=[
-    { id: 1, name: 'الفاتحة', english: 'Al-Fatihah', type: 'مكية', ayahs: 7 },
-    { id: 2, name: 'البقرة', english: 'Al-Baqarah', type: 'مدنية', ayahs: 286 },
-    { id: 3, name: 'آل عمران', english: 'Aal-Imran', type: 'مدنية', ayahs: 200 },
-    { id: 4, name: 'النساء', english: 'An-Nisa', type: 'مدنية', ayahs: 176 },
-    { id: 5, name: 'المائدة', english: 'Al-Ma’idah', type: 'مدنية', ayahs: 120 },
-    { id: 6, name: 'الأنعام', english: 'Al-An’am', type: 'مكية', ayahs: 165 },
-    { id: 7, name: 'الأعراف', english: 'Al-A’raf', type: 'مكية', ayahs: 206 },
-    { id: 8, name: 'الأنفال', english: 'Al-Anfal', type: 'مدنية', ayahs: 75 },
-    { id: 9, name: 'التوبة', english: 'At-Tawbah', type: 'مدنية', ayahs: 129 },
-    { id: 10, name: 'يونس', english: 'Yunus', type: 'مكية', ayahs: 109 },
-    { id: 11, name: 'هود', english: 'Hud', type: 'مكية', ayahs: 123 },
-    { id: 12, name: 'يوسف', english: 'Yusuf', type: 'مكية', ayahs: 111 },
-    { id: 13, name: 'الرعد', english: 'Ar-Ra’d', type: 'مدنية', ayahs: 43 },
-    { id: 14, name: 'إبراهيم', english: 'Ibrahim', type: 'مكية', ayahs: 52 },
-    { id: 15, name: 'الحجر', english: 'Al-Hijr', type: 'مكية', ayahs: 99 },
-    { id: 16, name: 'النحل', english: 'An-Nahl', type: 'مكية', ayahs: 128 },
-    { id: 17, name: 'الإسراء', english: 'Al-Isra', type: 'مكية', ayahs: 111 },
-    { id: 18, name: 'الكهف', english: 'Al-Kahf', type: 'مكية', ayahs: 110 },
-    { id: 19, name: 'مريم', english: 'Maryam', type: 'مكية', ayahs: 98 },
-    { id: 20, name: 'طه', english: 'Taha', type: 'مكية', ayahs: 135 },
-    { id: 21, name: 'الأنبياء', english: 'Al-Anbiya', type: 'مكية', ayahs: 112 },
-    { id: 22, name: 'الحج', english: 'Al-Hajj', type: 'مدنية', ayahs: 78 },
-    { id: 23, name: 'المؤمنون', english: 'Al-Mu’minun', type: 'مكية', ayahs: 118 },
-    { id: 24, name: 'النور', english: 'An-Nur', type: 'مدنية', ayahs: 64 },
-    { id: 25, name: 'الفرقان', english: 'Al-Furqan', type: 'مكية', ayahs: 77 },
-    { id: 26, name: 'الشعراء', english: 'Ash-Shu’ara', type: 'مكية', ayahs: 227 },
-    { id: 27, name: 'النمل', english: 'An-Naml', type: 'مكية', ayahs: 93 },
-    { id: 28, name: 'القصص', english: 'Al-Qasas', type: 'مكية', ayahs: 88 },
-    { id: 29, name: 'العنكبوت', english: 'Al-Ankabut', type: 'مكية', ayahs: 69 },
-    { id: 30, name: 'الروم', english: 'Ar-Rum', type: 'مكية', ayahs: 60 },
-    { id: 31, name: 'لقمان', english: 'Luqman', type: 'مكية', ayahs: 34 },
-    { id: 32, name: 'السجدة', english: 'As-Sajdah', type: 'مكية', ayahs: 30 },
-    { id: 33, name: 'الأحزاب', english: 'Al-Ahzab', type: 'مدنية', ayahs: 73 },
-    { id: 34, name: 'سبأ', english: 'Saba', type: 'مكية', ayahs: 54 },
-    { id: 35, name: 'فاطر', english: 'Fatir', type: 'مكية', ayahs: 45 },
-    { id: 36, name: 'يس', english: 'Ya-Sin', type: 'مكية', ayahs: 83 },
-    { id: 37, name: 'الصافات', english: 'As-Saffat', type: 'مكية', ayahs: 182 },
-    { id: 38, name: 'ص', english: 'Sad', type: 'مكية', ayahs: 88 },
-    { id: 39, name: 'الزمر', english: 'Az-Zumar', type: 'مكية', ayahs: 75 },
-    { id: 40, name: 'غافر', english: 'Ghafir', type: 'مكية', ayahs: 85 },
-    { id: 41, name: 'فصلت', english: 'Fussilat', type: 'مكية', ayahs: 54 },
-    { id: 42, name: 'الشورى', english: 'Ash-Shura', type: 'مكية', ayahs: 53 },
-    { id: 43, name: 'الزخرف', english: 'Az-Zukhruf', type: 'مكية', ayahs: 89 },
-    { id: 44, name: 'الدخان', english: 'Ad-Dukhan', type: 'مكية', ayahs: 59 },
-    { id: 45, name: 'الجاثية', english: 'Al-Jathiyah', type: 'مكية', ayahs: 37 },
-    { id: 46, name: 'الأحقاف', english: 'Al-Ahqaf', type: 'مكية', ayahs: 35 },
-    { id: 47, name: 'محمد', english: 'Muhammad', type: 'مدنية', ayahs: 38 },
-    { id: 48, name: 'الفتح', english: 'Al-Fath', type: 'مدنية', ayahs: 29 },
-    { id: 49, name: 'الحجرات', english: 'Al-Hujurat', type: 'مدنية', ayahs: 18 },
-    { id: 50, name: 'ق', english: 'Qaf', type: 'مكية', ayahs: 45 },
-    { id: 51, name: 'الذاريات', english: 'Adh-Dhariyat', type: 'مكية', ayahs: 60 },
-    { id: 52, name: 'الطور', english: 'At-Tur', type: 'مكية', ayahs: 49 },
-    { id: 53, name: 'النجم', english: 'An-Najm', type: 'مكية', ayahs: 62 },
-    { id: 54, name: 'القمر', english: 'Al-Qamar', type: 'مكية', ayahs: 55 },
-    { id: 55, name: 'الرحمن', english: 'Ar-Rahman', type: 'مدنية', ayahs: 78 },
-    { id: 56, name: 'الواقعة', english: 'Al-Waqi’ah', type: 'مكية', ayahs: 96 },
-    { id: 57, name: 'الحديد', english: 'Al-Hadid', type: 'مدنية', ayahs: 29 },
-    { id: 58, name: 'المجادلة', english: 'Al-Mujadila', type: 'مدنية', ayahs: 22 },
-    { id: 59, name: 'الحشر', english: 'Al-Hashr', type: 'مدنية', ayahs: 24 },
-    { id: 60, name: 'الممتحنة', english: 'Al-Mumtahanah', type: 'مدنية', ayahs: 13 },
-    { id: 61, name: 'الصف', english: 'As-Saff', type: 'مدنية', ayahs: 14 },
-    { id: 62, name: 'الجمعة', english: 'Al-Jumu’ah', type: 'مدنية', ayahs: 11 },
-    { id: 63, name: 'المنافقون', english: 'Al-Munafiqun', type: 'مدنية', ayahs: 11 },
-    { id: 64, name: 'التغابن', english: 'At-Taghabun', type: 'مدنية', ayahs: 18 },
-    { id: 65, name: 'الطلاق', english: 'At-Talaq', type: 'مدنية', ayahs: 12 },
-    { id: 66, name: 'التحريم', english: 'At-Tahrim', type: 'مدنية', ayahs: 12 },
-    { id: 67, name: 'الملك', english: 'Al-Mulk', type: 'مكية', ayahs: 30 },
-    { id: 68, name: 'القلم', english: 'Al-Qalam', type: 'مكية', ayahs: 52 },
-    { id: 69, name: 'الحاقة', english: 'Al-Haqqah', type: 'مكية', ayahs: 52 },
-    { id: 70, name: 'المعارج', english: 'Al-Ma’arij', type: 'مكية', ayahs: 44 },
-    { id: 71, name: 'نوح', english: 'Nuh', type: 'مكية', ayahs: 28 },
-    { id: 72, name: 'الجن', english: 'Al-Jinn', type: 'مكية', ayahs: 28 },
-    { id: 73, name: 'المزمل', english: 'Al-Muzzammil', type: 'مكية', ayahs: 20 },
-    { id: 74, name: 'المدثر', english: 'Al-Muddaththir', type: 'مكية', ayahs: 56 },
-    { id: 75, name: 'القيامة', english: 'Al-Qiyamah', type: 'مكية', ayahs: 40 },
-    { id: 76, name: 'الإنسان', english: 'Al-Insan', type: 'مدنية', ayahs: 31 },
-    { id: 77, name: 'المرسلات', english: 'Al-Mursalat', type: 'مكية', ayahs: 50 },
-    { id: 78, name: 'النبأ', english: 'An-Naba', type: 'مكية', ayahs: 40 },
-    { id: 79, name: 'النازعات', english: 'An-Nazi’at', type: 'مكية', ayahs: 46 },
-    { id: 80, name: 'عبس', english: 'Abasa', type: 'مكية', ayahs: 42 },
-    { id: 81, name: 'التكوير', english: 'At-Takwir', type: 'مكية', ayahs: 29 },
-    { id: 82, name: 'الانفطار', english: 'Al-Infitar', type: 'مكية', ayahs: 19 },
-    { id: 83, name: 'المطففين', english: 'Al-Mutaffifin', type: 'مكية', ayahs: 36 },
-    { id: 84, name: 'الانشقاق', english: 'Al-Inshiqaq', type: 'مكية', ayahs: 25 },
-    { id: 85, name: 'البروج', english: 'Al-Buruj', type: 'مكية', ayahs: 22 },
-    { id: 86, name: 'الطارق', english: 'At-Tariq', type: 'مكية', ayahs: 17 },
-    { id: 87, name: 'الأعلى', english: 'Al-A’la', type: 'مكية', ayahs: 19 },
-    { id: 88, name: 'الغاشية', english: 'Al-Ghashiyah', type: 'مكية', ayahs: 26 },
-    { id: 89, name: 'الفجر', english: 'Al-Fajr', type: 'مكية', ayahs: 30 },
-    { id: 90, name: 'البلد', english: 'Al-Balad', type: 'مكية', ayahs: 20 },
-    { id: 91, name: 'الشمس', english: 'Ash-Shams', type: 'مكية', ayahs: 15 },
-    { id: 92, name: 'الليل', english: 'Al-Layl', type: 'مكية', ayahs: 21 },
-    { id: 93, name: 'الضحى', english: 'Ad-Duhaa', type: 'مكية', ayahs: 11 },
-    { id: 94, name: 'الشرح', english: 'Ash-Sharh', type: 'مكية', ayahs: 8 },
-    { id: 95, name: 'التين', english: 'At-Tin', type: 'مكية', ayahs: 8 },
-    { id: 96, name: 'العلق', english: 'Al-Alaq', type: 'مكية', ayahs: 19 },
-    { id: 97, name: 'القدر', english: 'Al-Qadr', type: 'مكية', ayahs: 5 },
-    { id: 98, name: 'البينة', english: 'Al-Bayyinah', type: 'مدنية', ayahs: 8 },
-    { id: 99, name: 'الزلزلة', english: 'Az-Zalzalah', type: 'مدنية', ayahs: 8 },
-    { id: 100, name: 'العاديات', english: 'Al-Adiyat', type: 'مكية', ayahs: 11 },
-    { id: 101, name: 'القارعة', english: 'Al-Qari’ah', type: 'مكية', ayahs: 11 },
-    { id: 102, name: 'التكاثر', english: 'At-Takathur', type: 'مكية', ayahs: 8 },
-    { id: 103, name: 'العصر', english: 'Al-Asr', type: 'مكية', ayahs: 3 },
-    { id: 104, name: 'الهمزة', english: 'Al-Humazah', type: 'مكية', ayahs: 9 },
-    { id: 105, name: 'الفيل', english: 'Al-Fil', type: 'مكية', ayahs: 5 },
-    { id: 106, name: 'قريش', english: 'Quraysh', type: 'مكية', ayahs: 4 },
-    { id: 107, name: 'الماعون', english: 'Al-Ma’un', type: 'مكية', ayahs: 7 },
-    { id: 108, name: 'الكوثر', english: 'Al-Kawthar', type: 'مكية', ayahs: 3 },
-    { id: 109, name: 'الكافرون', english: 'Al-Kafirun', type: 'مكية', ayahs: 6 },
-    { id: 110, name: 'النصر', english: 'An-Nasr', type: 'مدنية', ayahs: 3 },
-    { id: 111, name: 'المسد', english: 'Al-Masad', type: 'مكية', ayahs: 5 },
-    { id: 112, name: 'الإخلاص', english: 'Al-Ikhlas', type: 'مكية', ayahs: 4 },
-    { id: 113, name: 'الفلق', english: 'Al-Falaq', type: 'مكية', ayahs: 5 },
-    { id: 114, name: 'الناس', english: 'An-Nas', type: 'مكية', ayahs: 6 }
+  const HADITH_CDN = 'https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/';
+
+  const HADITH_BOOKS = [
+    { id: 'bukhari', title: 'صحيح البخاري', edition: 'ara-bukhari', minEdition: 'ara-bukhari.min', note: 'من أصح كتب الحديث، يحتوي على أبواب كثيرة وترقيم تفصيلي.' },
+    { id: 'muslim', title: 'صحيح مسلم', edition: 'ara-muslim', minEdition: 'ara-muslim.min', note: 'أحد الصحيحين، مرتب على الكتب والأبواب.' },
+    { id: 'abudawud', title: 'سنن أبي داود', edition: 'ara-abudawud', minEdition: 'ara-abudawud.min', note: 'من كتب السنن، غني بأحاديث الأحكام.' },
+    { id: 'tirmidhi', title: 'جامع الترمذي', edition: 'ara-tirmidhi', minEdition: 'ara-tirmidhi.min', note: 'يتضمن أحكامًا على كثير من الأحاديث عند توفرها.' },
+    { id: 'nasai', title: 'سنن النسائي', edition: 'ara-nasai', minEdition: 'ara-nasai.min', note: 'من دواوين السنن المشهورة.' },
+    { id: 'ibnmajah', title: 'سنن ابن ماجه', edition: 'ara-ibnmajah', minEdition: 'ara-ibnmajah.min', note: 'من الكتب الستة عند جمهور المتأخرين.' },
+    { id: 'malik', title: 'موطأ مالك', edition: 'ara-malik', minEdition: 'ara-malik.min', note: 'من أقدم كتب الحديث والفقه.' },
+    { id: 'nawawi', title: 'الأربعون النووية', edition: 'ara-nawawi', minEdition: 'ara-nawawi.min', note: 'مختصر تعليمي مشهور في جوامع الكلم.' },
+    { id: 'qudsi', title: 'الأحاديث القدسية', edition: 'ara-qudsi', minEdition: 'ara-qudsi.min', note: 'مجموعة أحاديث قدسية بحسب المصدر المتاح.' },
+    { id: 'dehlawi', title: 'حجة الله البالغة', edition: 'ara-dehlawi', minEdition: 'ara-dehlawi.min', note: 'مصدر إضافي عند توفر الملف العربي.' }
   ];
-const API={quranCloud:'https://api.alquran.cloud/v1'},PAGE_COUNT=604,DEFAULT_PAGE=149;
-const STORAGE={page:'qmaCurrentPage',theme:'quranTheme',font:'qmaFontScale',saved:'qmaSavedPages'};
-const OFFLINE_PAGES={
-1:{number:1,source:'bundle',juz:1,ayahs:[{numberInSurah:1,page:1,juz:1,surah:{number:1,name:'الفاتحة'},text:'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ'},{numberInSurah:2,page:1,juz:1,surah:{number:1,name:'الفاتحة'},text:'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ'},{numberInSurah:3,page:1,juz:1,surah:{number:1,name:'الفاتحة'},text:'الرَّحْمَٰنِ الرَّحِيمِ'},{numberInSurah:4,page:1,juz:1,surah:{number:1,name:'الفاتحة'},text:'مَالِكِ يَوْمِ الدِّينِ'},{numberInSurah:5,page:1,juz:1,surah:{number:1,name:'الفاتحة'},text:'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ'},{numberInSurah:6,page:1,juz:1,surah:{number:1,name:'الفاتحة'},text:'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ'},{numberInSurah:7,page:1,juz:1,surah:{number:1,name:'الفاتحة'},text:'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ'}]},
-2:{number:2,source:'bundle',juz:1,ayahs:[{numberInSurah:1,page:2,juz:1,surah:{number:2,name:'البقرة'},text:'الم'},{numberInSurah:2,page:2,juz:1,surah:{number:2,name:'البقرة'},text:'ذَٰلِكَ الْكِتَابُ لَا رَيْبَ فِيهِ هُدًى لِّلْمُتَّقِينَ'},{numberInSurah:3,page:2,juz:1,surah:{number:2,name:'البقرة'},text:'الَّذِينَ يُؤْمِنُونَ بِالْغَيْبِ وَيُقِيمُونَ الصَّلَاةَ وَمِمَّا رَزَقْنَاهُمْ يُنفِقُونَ'},{numberInSurah:4,page:2,juz:1,surah:{number:2,name:'البقرة'},text:'وَالَّذِينَ يُؤْمِنُونَ بِمَا أُنزِلَ إِلَيْكَ وَمَا أُنزِلَ مِن قَبْلِكَ وَبِالْآخِرَةِ هُمْ يُوقِنُونَ'},{numberInSurah:5,page:2,juz:1,surah:{number:2,name:'البقرة'},text:'أُولَٰئِكَ عَلَىٰ هُدًى مِّن رَّبِّهِمْ وَأُولَٰئِكَ هُمُ الْمُفْلِحُونَ'}]},
-149:{number:149,source:'bundle',juz:8,ayahs:[{numberInSurah:152,page:149,juz:8,surah:{number:6,name:'الأنعام'},text:'وَلَا تَقْرَبُوا مَالَ الْيَتِيمِ إِلَّا بِالَّتِي هِيَ أَحْسَنُ حَتَّىٰ يَبْلُغَ أَشُدَّهُ وَأَوْفُوا الْكَيْلَ وَالْمِيزَانَ بِالْقِسْطِ لَا نُكَلِّفُ نَفْسًا إِلَّا وُسْعَهَا وَإِذَا قُلْتُمْ فَاعْدِلُوا وَلَوْ كَانَ ذَا قُرْبَىٰ وَبِعَهْدِ اللَّهِ أَوْفُوا ذَٰلِكُمْ وَصَّاكُم بِهِ لَعَلَّكُمْ تَذَكَّرُونَ'},{numberInSurah:153,page:149,juz:8,surah:{number:6,name:'الأنعام'},text:'وَأَنَّ هَٰذَا صِرَاطِي مُسْتَقِيمًا فَاتَّبِعُوهُ وَلَا تَتَّبِعُوا السُّبُلَ فَتَفَرَّقَ بِكُمْ عَن سَبِيلِهِ ذَٰلِكُمْ وَصَّاكُم بِهِ لَعَلَّكُمْ تَتَّقُونَ'},{numberInSurah:154,page:149,juz:8,surah:{number:6,name:'الأنعام'},text:'ثُمَّ آتَيْنَا مُوسَى الْكِتَابَ تَمَامًا عَلَى الَّذِي أَحْسَنَ وَتَفْصِيلًا لِّكُلِّ شَيْءٍ وَهُدًى وَرَحْمَةً لَّعَلَّهُم بِلِقَاءِ رَبِّهِمْ يُؤْمِنُونَ'},{numberInSurah:155,page:149,juz:8,surah:{number:6,name:'الأنعام'},text:'وَهَٰذَا كِتَابٌ أَنزَلْنَاهُ مُبَارَكٌ فَاتَّبِعُوهُ وَاتَّقُوا لَعَلَّكُمْ تُرْحَمُونَ'},{numberInSurah:156,page:149,juz:8,surah:{number:6,name:'الأنعام'},text:'أَن تَقُولُوا إِنَّمَا أُنزِلَ الْكِتَابُ عَلَىٰ طَائِفَتَيْنِ مِن قَبْلِنَا وَإِن كُنَّا عَن دِرَاسَتِهِمْ لَغَافِلِينَ'},{numberInSurah:157,page:149,juz:8,surah:{number:6,name:'الأنعام'},text:'أَوْ تَقُولُوا لَوْ أَنَّا أُنزِلَ عَلَيْنَا الْكِتَابُ لَكُنَّا أَهْدَىٰ مِنْهُمْ فَقَدْ جَاءَكُم بَيِّنَةٌ مِّن رَّبِّكُمْ وَهُدًى وَرَحْمَةٌ فَمَنْ أَظْلَمُ مِمَّن كَذَّبَ بِآيَاتِ اللَّهِ وَصَدَفَ عَنْهَا سَنَجْزِي الَّذِينَ يَصْدِفُونَ عَنْ آيَاتِنَا سُوءَ الْعَذَابِ بِمَا كَانُوا يَصْدِفُونَ'}]},
-604:{number:604,source:'bundle',juz:30,ayahs:[{numberInSurah:1,page:604,juz:30,surah:{number:112,name:'الإخلاص'},text:'قُلْ هُوَ اللَّهُ أَحَدٌ'},{numberInSurah:2,page:604,juz:30,surah:{number:112,name:'الإخلاص'},text:'اللَّهُ الصَّمَدُ'},{numberInSurah:3,page:604,juz:30,surah:{number:112,name:'الإخلاص'},text:'لَمْ يَلِدْ وَلَمْ يُولَدْ'},{numberInSurah:4,page:604,juz:30,surah:{number:112,name:'الإخلاص'},text:'وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ'},{numberInSurah:1,page:604,juz:30,surah:{number:113,name:'الفلق'},text:'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ'},{numberInSurah:2,page:604,juz:30,surah:{number:113,name:'الفلق'},text:'مِن شَرِّ مَا خَلَقَ'},{numberInSurah:3,page:604,juz:30,surah:{number:113,name:'الفلق'},text:'وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ'},{numberInSurah:4,page:604,juz:30,surah:{number:113,name:'الفلق'},text:'وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ'},{numberInSurah:5,page:604,juz:30,surah:{number:113,name:'الفلق'},text:'وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ'},{numberInSurah:1,page:604,juz:30,surah:{number:114,name:'الناس'},text:'قُلْ أَعُوذُ بِرَبِّ النَّاسِ'},{numberInSurah:2,page:604,juz:30,surah:{number:114,name:'الناس'},text:'مَلِكِ النَّاسِ'},{numberInSurah:3,page:604,juz:30,surah:{number:114,name:'الناس'},text:'إِلَٰهِ النَّاسِ'},{numberInSurah:4,page:604,juz:30,surah:{number:114,name:'الناس'},text:'مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ'},{numberInSurah:5,page:604,juz:30,surah:{number:114,name:'الناس'},text:'الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ'},{numberInSurah:6,page:604,juz:30,surah:{number:114,name:'الناس'},text:'مِنَ الْجِنَّةِ وَالنَّاسِ'}]}
-};
-const $=(s,c=document)=>c.querySelector(s),$$=(s,c=document)=>Array.from(c.querySelectorAll(s));
-function toArabicDigits(v){return String(v).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[Number(d)])}function escapeHtml(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}function normalizeArabic(v){return String(v||'').replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g,'').replace(/[إأآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/ة/g,'ه').replace(/ـ/g,'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[\s\p{P}\p{S}]+/gu,' ').trim().toLowerCase()}function cleanQuranText(v){return String(v||'').normalize('NFC').replace(/[\u0610-\u061A\u06D6-\u06ED\u08D4-\u08FF]/g,'').replace(/[\uE000-\uF8FF\uFDFD\uFD3E\uFD3F\uFFFC\uFFFD]/g,'').replace(/[\u25A0-\u25FF□▪▫◦●○◆◇■]/g,'').replace(/[^\u0600-\u06FF\u0750-\u077F\u0870-\u089F\u08A0-\u08CF\u064B-\u065F\u0670\s]/g,'').replace(/\s+/g,' ').trim()}function clampPage(p){const n=Number(p);return Number.isInteger(n)&&n>=1&&n<=PAGE_COUNT?n:DEFAULT_PAGE}function getSurah(n){return SURAHS.find(s=>s.id===Number(n))||SURAHS[0]}function getJuzLabel(j){return`الجزء ${toArabicDigits(j||1)}`}function pageKey(p){return`qma-page-v1-${p}`}function readJson(k,f=null){try{return JSON.parse(localStorage.getItem(k)||'')}catch(e){return f}}function writeJson(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-function setTheme(t){const selected=t||localStorage.getItem(STORAGE.theme)||'classic';document.documentElement.setAttribute('data-quran-theme',selected);localStorage.setItem(STORAGE.theme,selected);$$('[data-theme]').forEach(b=>b.classList.toggle('is-active',b.dataset.theme===selected))}function setFontScale(p){const v=Math.min(135,Math.max(85,Number(p)||100));localStorage.setItem(STORAGE.font,String(v));document.documentElement.style.setProperty('--font-scale-app',String(v/100));const r=$('#qma-font-range');if(r)r.value=String(v);const l=$('#qma-font-percent');if(l)l.textContent=`${v}%`}
-function transformPagePayload(payload,page){const data=payload&&payload.data?payload.data:payload,ayahs=data&&Array.isArray(data.ayahs)?data.ayahs:[];if(!ayahs.length)throw new Error('empty-page');return{number:page,source:'network',juz:ayahs[0].juz||data.number||1,ayahs:ayahs.map(a=>({text:cleanQuranText(a.text||''),numberInSurah:a.numberInSurah||a.number||1,page:a.page||page,juz:a.juz||1,hizbQuarter:a.hizbQuarter||null,surah:{number:a.surah&&(a.surah.number||a.surah.id)||1,name:a.surah&&(a.surah.name||a.surah.englishName)||getSurah(1).name}}))}}
-async function fetchPageData(page,force=false){const n=clampPage(page);if(!force){const c=readJson(pageKey(n));if(c&&c.ayahs&&c.ayahs.length)return{...c,source:c.source||'cache'}}try{const res=await fetch(`${API.quranCloud}/page/${n}/quran-simple-clean`,{headers:{Accept:'application/json'}});if(!res.ok)throw new Error(`HTTP ${res.status}`);const payload=await res.json();const data=transformPagePayload(payload,n);writeJson(pageKey(n),data);return data}catch(error){const c=readJson(pageKey(n));if(c&&c.ayahs&&c.ayahs.length)return{...c,source:'cache'};if(OFFLINE_PAGES[n])return OFFLINE_PAGES[n];return{number:n,source:'missing',juz:1,ayahs:[]}}}
-function ayahNumber(n){return`<span class="qma-ayah-number">${toArabicDigits(n)}</span>`}function renderMushaf(data){const wrap=$('#qma-mushaf-page');if(!wrap)return;if(!data.ayahs.length){wrap.innerHTML=`<div class="qma-empty-state">هذه الصفحة غير محفوظة أوفلاين بعد. افتحها مرة واحدة وأنت متصل، أو استخدم زر تحميل صفحات القرآن من الإعدادات.</div><span class="qma-page-corner">${toArabicDigits(data.number)}</span>`;return}let lastSurah=null;const parts=[];data.ayahs.forEach(ayah=>{const surahNo=ayah.surah.number;if(surahNo!==lastSurah){const surah=getSurah(surahNo);parts.push(`<span class="qma-surah-break">سورة ${escapeHtml(surah.name||ayah.surah.name)}</span>`);if(ayah.numberInSurah===1&&surahNo!==1&&surahNo!==9)parts.push('<span class="qma-basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>');lastSurah=surahNo}parts.push(`<span class="qma-ayah-inline" data-surah="${surahNo}" data-ayah="${ayah.numberInSurah}" data-page="${data.number}">${escapeHtml(cleanQuranText(ayah.text))}${ayahNumber(ayah.numberInSurah)} </span>`)});const first=data.ayahs[0];const surahName=getSurah(first.surah.number).name||first.surah.name;const pageLabel=toArabicDigits(data.number);wrap.innerHTML=`<div class="qma-mushaf-meta"><span>${escapeHtml(surahName)}</span><span class="qma-center-mark">▦</span><span>${getJuzLabel(first.juz||data.juz)}</span></div><div class="qma-mushaf-text">${parts.join('')}</div><span class="qma-page-corner">${pageLabel}</span>`;if($('#qma-mushaf-badge'))$('#qma-mushaf-badge').innerHTML=`<span>‹</span><span>${escapeHtml(surahName)} - ${pageLabel}</span><span>▦</span>`;if($('#qma-surah-name'))$('#qma-surah-name').textContent=surahName;if($('#qma-juz-name'))$('#qma-juz-name').textContent=getJuzLabel(first.juz||data.juz);if($('#qma-ayah-pill'))$('#qma-ayah-pill').textContent=`آية ${toArabicDigits(first.numberInSurah)}`;if($('#qma-page-number'))$('#qma-page-number').textContent=pageLabel;if($('#qma-page-neighbors'))$('#qma-page-neighbors').textContent=`${toArabicDigits(Math.max(1,data.number-1))} · ${toArabicDigits(Math.min(PAGE_COUNT,data.number+1))}`;const progress=$('#qma-page-progress');if(progress)progress.style.width=`${data.number/PAGE_COUNT*100}%`;localStorage.setItem(STORAGE.page,String(data.number));document.title=`صفحة ${pageLabel} - سورة ${surahName}`;document.dispatchEvent(new CustomEvent('qma-page-rendered',{detail:{page:data.number,surah:first.surah.number,ayah:first.numberInSurah}}))}
-async function loadMushafPage(page,force=false){const wrap=$('#qma-mushaf-page');const n=clampPage(page);if(wrap)wrap.innerHTML='<div class="qma-mushaf-loader">جار تحميل صفحة المصحف...</div>';const data=await fetchPageData(n,force);renderMushaf(data);const url=new URL(location.href);url.searchParams.set('page',String(n));history.replaceState(null,'',url)}
-function initMushaf(){const params=new URLSearchParams(location.search);const initial=clampPage(params.get('page')||localStorage.getItem(STORAGE.page)||DEFAULT_PAGE);loadMushafPage(initial);$('#qma-page-prev')?.addEventListener('click',()=>loadMushafPage(clampPage((Number(localStorage.getItem(STORAGE.page))||initial)-1)));$('#qma-page-next')?.addEventListener('click',()=>loadMushafPage(clampPage((Number(localStorage.getItem(STORAGE.page))||initial)+1)));$('#qma-scroll-down')?.addEventListener('click',()=>window.scrollBy({top:Math.round(window.innerHeight*.65),behavior:'smooth'}));/* qma-fullscreen opens index sheet in qma-reviewed.js */$('#qma-save-page')?.addEventListener('click',()=>{const current=clampPage(localStorage.getItem(STORAGE.page)||initial);const saved=new Set(readJson(STORAGE.saved,[]));saved.add(current);writeJson(STORAGE.saved,Array.from(saved));$('#qma-save-page').textContent='✓';setTimeout(()=>$('#qma-save-page')&&($('#qma-save-page').textContent='⌑'),900)});$('#qma-header-search')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const q=e.currentTarget.value.trim();if(q)location.href=`search.html?q=${encodeURIComponent(q)}`}});let startX=0;document.addEventListener('touchstart',e=>{startX=e.changedTouches[0].screenX},{passive:true});document.addEventListener('touchend',e=>{const diff=e.changedTouches[0].screenX-startX;if(Math.abs(diff)<90)return;const current=clampPage(localStorage.getItem(STORAGE.page)||initial);loadMushafPage(diff>0?current+1:current-1)},{passive:true})}
-function cachedPages(){const items=Object.values(OFFLINE_PAGES);for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&key.startsWith('qma-page-v1-')){const data=readJson(key);if(data&&data.ayahs)items.push(data)}}const seen=new Set;return items.filter(p=>{if(seen.has(p.number))return false;seen.add(p.number);return true})}function escapeRegExp(v){return String(v).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}function resultMarkup(result,query){const text=escapeHtml(result.text||'').replace(new RegExp(escapeRegExp(escapeHtml(query)),'gi'),'<mark>$&</mark>');return`<a class="qma-result-card" href="surah.html?page=${result.page||149}"><strong>${escapeHtml(result.title)}</strong><p>${text}</p></a>`}
-async function doSearch(query){const output=$('#qma-search-results');if(!output)return;const clean=normalizeArabic(query);if(clean.length<2){output.innerHTML='<div class="qma-empty-state">اكتب حرفين على الأقل.</div>';return}output.innerHTML='<div class="qma-empty-state">جار البحث...</div>';const surahMatches=SURAHS.filter(s=>normalizeArabic(`${s.id} ${s.name} ${s.english}`).includes(clean)).slice(0,8).map(s=>({title:`سورة ${s.name}`,text:`${s.ayahs} آية · ${s.type} · ترتيبها ${s.id}`,page:null}));try{const res=await fetch(`${API.quranCloud}/search/${encodeURIComponent(query)}/all/quran-simple-clean`);if(!res.ok)throw new Error('search-failed');const payload=await res.json();const matches=payload?.data?.matches||[];const remote=matches.slice(0,25).map(m=>({title:`سورة ${m.surah.name} · آية ${toArabicDigits(m.numberInSurah)}`,text:m.text,page:m.page||localStorage.getItem(STORAGE.page)||149}));const all=[...surahMatches,...remote];output.innerHTML=all.length?all.map(r=>resultMarkup(r,query)).join(''):'<div class="qma-empty-state">لا توجد نتائج.</div>'}catch(error){const local=[];cachedPages().forEach(page=>{page.ayahs.forEach(ayah=>{if(normalizeArabic(ayah.text).includes(clean))local.push({title:`سورة ${ayah.surah.name} · آية ${toArabicDigits(ayah.numberInSurah)} · صفحة ${toArabicDigits(page.number)}`,text:ayah.text,page:page.number})})});const all=[...surahMatches,...local.slice(0,30)];output.innerHTML=all.length?all.map(r=>resultMarkup(r,query)).join(''):'<div class="qma-empty-state">لا توجد نتائج في البيانات المحفوظة أوفلاين.</div>'}}
-function initSearch(){const form=$('#qma-search-form'),input=$('#qma-search-input'),params=new URLSearchParams(location.search);if(input&&params.get('q')){input.value=params.get('q');doSearch(input.value)}form?.addEventListener('submit',e=>{e.preventDefault();doSearch(input.value.trim())})}function initSettings(){$('#qma-font-range')?.addEventListener('input',e=>setFontScale(e.target.value));$$('[data-switch]').forEach(btn=>btn.addEventListener('click',()=>btn.classList.toggle('is-on')));$('#qma-download-pages')?.addEventListener('click',downloadPagesForOffline);$('#qma-export-settings')?.addEventListener('click',()=>{const payload={theme:localStorage.getItem(STORAGE.theme),font:localStorage.getItem(STORAGE.font),page:localStorage.getItem(STORAGE.page),saved:readJson(STORAGE.saved,[])};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='quran-settings-backup.json';a.click();URL.revokeObjectURL(url)})}
-async function downloadPagesForOffline(){const status=$('#qma-offline-status'),button=$('#qma-download-pages');if(button)button.disabled=true;let ok=0;for(let page=1;page<=PAGE_COUNT;page++){try{const data=await fetchPageData(page,true);if(data.ayahs.length)ok++}catch(e){}if(status&&(page===1||page%10===0||page===PAGE_COUNT))status.textContent=`تم حفظ ${toArabicDigits(ok)} صفحة من ${toArabicDigits(page)} محاولة...`;await new Promise(r=>setTimeout(r,35))}if(status)status.textContent=`انتهى التحميل. الصفحات المحفوظة: ${toArabicDigits(ok)} من ٦٠٤.`;if(button)button.disabled=false}
-function initDatesAndCards(){const date=new Date,formatted=date.toLocaleDateString('ar-EG',{weekday:'long',year:'numeric',month:'long',day:'numeric'});if($('#qma-current-date'))$('#qma-current-date').textContent=formatted;if($('#qma-hijri-date'))$('#qma-hijri-date').textContent=formatted;$$('[data-href]').forEach(btn=>btn.addEventListener('click',()=>location.href=btn.dataset.href));$$('[data-action]').forEach(btn=>btn.addEventListener('click',()=>{btn.classList.add('is-active');setTimeout(()=>btn.classList.remove('is-active'),450)}));$$('[data-font-step]').forEach(btn=>btn.addEventListener('click',()=>{const current=Number(localStorage.getItem(STORAGE.font)||100);setFontScale(current+Number(btn.dataset.fontStep)*5)}));$$('[data-filter-list]').forEach(input=>input.addEventListener('input',e=>{const q=normalizeArabic(e.target.value);$$('[data-list] .qma-row').forEach(row=>row.hidden=q&&!normalizeArabic(row.textContent).includes(q))}))}function bindGlobal(){$$('[data-theme]').forEach(btn=>btn.addEventListener('click',()=>setTheme(btn.dataset.theme)));const pathname=(location.pathname.split('/').pop()||'index.html').toLowerCase();$$('.qma-bottom-nav a').forEach(a=>{const href=(a.getAttribute('href')||'').split('?')[0].toLowerCase();if(href===pathname)a.setAttribute('aria-current','page')})}function init(){setTheme();setFontScale(Number(localStorage.getItem(STORAGE.font)||100));bindGlobal();initDatesAndCards();const page=document.body.dataset.qmaPage;if(page==='mushaf')initMushaf();if(page==='search')initSearch();if(page==='settings')initSettings()}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+
+  const state = {
+    activeBookId: localStorage.getItem('hadithActiveBook') || 'bukhari',
+    payloads: new Map(),
+    currentItems: [],
+    visibleItems: [],
+    sections: [],
+    page: 1,
+    pageSize: 20,
+    query: '',
+    fontScale: Number(localStorage.getItem('quranFontScale') || '1')
+  };
+
+  const $ = (selector, context = document) => context.querySelector(selector);
+  const $$ = (selector, context = document) => Array.from(context.querySelectorAll(selector));
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function stripHtml(value) {
+    const node = document.createElement('div');
+    node.innerHTML = String(value || '');
+    return node.textContent || node.innerText || '';
+  }
+
+  function normalizeArabic(value) {
+    return String(value || '')
+      .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, '')
+      .replace(/[إأآٱ]/g, 'ا')
+      .replace(/ى/g, 'ي')
+      .replace(/ؤ/g, 'و')
+      .replace(/ئ/g, 'ي')
+      .replace(/ة/g, 'ه')
+      .replace(/ـ/g, '')
+      .replace(/[٠-٩]/g, digit => '٠١٢٣٤٥٦٧٨٩'.indexOf(digit))
+      .replace(/[\s\p{P}\p{S}]+/gu, ' ')
+      .trim()
+      .toLowerCase();
+  }
+
+  function escapeRegExp(value) {
+    return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function setStatus(message, isError) {
+    const node = $('#hadith-status');
+    if (!node) return;
+    node.textContent = message;
+    node.classList.toggle('quran-error', Boolean(isError));
+  }
+
+  function getBook(bookId) {
+    return HADITH_BOOKS.find(book => book.id === bookId) || HADITH_BOOKS[0];
+  }
+
+  function getBookUrl(book) {
+    return `${HADITH_CDN}${book.minEdition || `${book.edition}.min`}.json`;
+  }
+
+  function setTheme(theme) {
+    const selected = theme || localStorage.getItem('quranTheme') || 'emerald';
+    document.documentElement.setAttribute('data-quran-theme', selected);
+    localStorage.setItem('quranTheme', selected);
+    $$('[data-theme]').forEach(button => button.classList.toggle('is-active', button.dataset.theme === selected));
+  }
+
+  function setFontScale(scale) {
+    state.fontScale = Math.min(1.45, Math.max(0.82, Number(scale.toFixed(2))));
+    document.documentElement.style.setProperty('--quran-font-scale', state.fontScale);
+    localStorage.setItem('quranFontScale', String(state.fontScale));
+  }
+
+  function extractHadiths(payload) {
+    if (!payload) return [];
+    if (Array.isArray(payload)) return payload;
+    if (Array.isArray(payload.hadiths)) return payload.hadiths;
+    if (Array.isArray(payload.hadith)) return payload.hadith;
+    if (Array.isArray(payload.data)) return payload.data;
+    if (payload.data && Array.isArray(payload.data.hadiths)) return payload.data.hadiths;
+    if (payload.collection && Array.isArray(payload.collection)) return payload.collection;
+    return [];
+  }
+
+  function extractSections(payload) {
+    const sources = [
+      payload && payload.metadata && payload.metadata.sections,
+      payload && payload.sections,
+      payload && payload.metadata && payload.metadata.section_details,
+      payload && payload.section_details
+    ].filter(Boolean);
+
+    for (const source of sources) {
+      if (Array.isArray(source)) {
+        return source.map((item, index) => ({
+          id: String(item.id || item.number || item.section || index + 1),
+          name: item.name || item.title || item.arabic || item.english || `باب ${index + 1}`
+        }));
+      }
+      if (typeof source === 'object') {
+        return Object.entries(source).map(([id, value]) => ({
+          id: String(id),
+          name: typeof value === 'string' ? value : (value.name || value.title || value.arabic || value.english || `باب ${id}`)
+        }));
+      }
+    }
+    return [];
+  }
+
+  function getHadithText(item) {
+    const text = item.text || item.arabic || item.hadithArabic || item.hadeeth || item.hadith || item.body || item.content || '';
+    return stripHtml(text).trim();
+  }
+
+  function getHadithNumber(item, index) {
+    return item.hadithnumber || item.hadithNumber || item.arabicnumber || item.number || item.id || item.reference?.hadith || index + 1;
+  }
+
+  function getSectionId(item) {
+    return String(item.reference?.book || item.book || item.section || item.section_id || item.chapter || item.chapterId || item.book_number || '');
+  }
+
+  function getGrade(item) {
+    if (typeof item.grade === 'string') return item.grade;
+    if (typeof item.status === 'string') return item.status;
+    if (Array.isArray(item.grades) && item.grades.length) {
+      return item.grades.map(grade => grade.grade || grade.name || grade).filter(Boolean).join(' · ');
+    }
+    if (item.classification) return item.classification;
+    return '';
+  }
+
+  function getReference(item) {
+    const parts = [];
+    if (item.reference?.book) parts.push(`كتاب ${item.reference.book}`);
+    if (item.reference?.hadith) parts.push(`حديث ${item.reference.hadith}`);
+    if (item.bookSlug) parts.push(item.bookSlug);
+    if (item.arabicnumber) parts.push(`رقم عربي ${item.arabicnumber}`);
+    return parts.join(' · ');
+  }
+
+  function getSectionName(sectionId) {
+    const found = state.sections.find(section => String(section.id) === String(sectionId));
+    return found ? found.name : '';
+  }
+
+  function enrichItems(items, book) {
+    return items.map((item, index) => {
+      const sectionId = getSectionId(item);
+      return {
+        raw: item,
+        bookId: book.id,
+        bookTitle: book.title,
+        number: getHadithNumber(item, index),
+        sectionId,
+        sectionName: getSectionName(sectionId),
+        text: getHadithText(item),
+        grade: getGrade(item),
+        reference: getReference(item)
+      };
+    }).filter(item => item.text);
+  }
+
+  async function fetchBook(bookId) {
+    const book = getBook(bookId);
+    if (state.payloads.has(book.id)) return state.payloads.get(book.id);
+
+    const response = await fetch(getBookUrl(book), { headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error(`تعذر تحميل ${book.title}`);
+    const payload = await response.json();
+    state.payloads.set(book.id, payload);
+    return payload;
+  }
+
+  function renderBooks() {
+    const list = $('#hadith-book-list');
+    const select = $('#hadith-book-select');
+    if (select) {
+      select.innerHTML = HADITH_BOOKS.map(book => `<option value="${book.id}">${escapeHtml(book.title)}</option>`).join('');
+      select.value = state.activeBookId;
+    }
+    if (!list) return;
+    list.innerHTML = HADITH_BOOKS.map(book => `
+      <button type="button" class="hadith-book-button ${book.id === state.activeBookId ? 'is-active' : ''}" data-hadith-book="${book.id}">
+        <strong>${escapeHtml(book.title)}</strong>
+        <span>${escapeHtml(book.note)}</span>
+      </button>
+    `).join('');
+  }
+
+  function renderSections() {
+    const select = $('#hadith-section-select');
+    if (!select) return;
+    const options = ['<option value="all">كل الأبواب</option>'].concat(
+      state.sections.map(section => `<option value="${escapeHtml(section.id)}">${escapeHtml(section.name)}</option>`)
+    );
+    select.innerHTML = options.join('');
+  }
+
+  function highlight(text, query) {
+    const escaped = escapeHtml(text);
+    const raw = String(query || '').trim();
+    if (!raw) return escaped;
+    try {
+      return escaped.replace(new RegExp(escapeRegExp(escapeHtml(raw)), 'gi'), match => `<mark>${match}</mark>`);
+    } catch (error) {
+      return escaped;
+    }
+  }
+
+  function applyFilters(resetPage) {
+    const sectionValue = $('#hadith-section-select')?.value || 'all';
+    const normalizedQuery = normalizeArabic(state.query);
+    state.visibleItems = state.currentItems.filter(item => {
+      const sectionOk = sectionValue === 'all' || String(item.sectionId) === String(sectionValue);
+      const queryOk = !normalizedQuery || normalizeArabic(`${item.text} ${item.bookTitle} ${item.sectionName} ${item.number}`).includes(normalizedQuery);
+      return sectionOk && queryOk;
+    });
+    if (resetPage) state.page = 1;
+    renderHadiths();
+  }
+
+  function renderHadiths() {
+    const output = $('#hadith-results');
+    const title = $('#hadith-current-title');
+    const pageLabel = $('#hadith-page-label');
+    if (!output) return;
+
+    const total = state.visibleItems.length;
+    const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
+    state.page = Math.min(Math.max(1, state.page), totalPages);
+    const start = (state.page - 1) * state.pageSize;
+    const pageItems = state.visibleItems.slice(start, start + state.pageSize);
+
+    if (title) {
+      const book = getBook(state.activeBookId);
+      title.textContent = total ? `${book.title} · ${total.toLocaleString('ar-EG')} حديث` : `${book.title} · لا توجد نتائج`;
+    }
+    if (pageLabel) pageLabel.textContent = `صفحة ${state.page.toLocaleString('ar-EG')} من ${totalPages.toLocaleString('ar-EG')}`;
+    $('#hadith-prev-page')?.toggleAttribute('disabled', state.page <= 1);
+    $('#hadith-next-page')?.toggleAttribute('disabled', state.page >= totalPages);
+
+    if (!pageItems.length) {
+      output.innerHTML = '<div class="hadith-empty">لا توجد أحاديث مطابقة للفلتر الحالي.</div>';
+      return;
+    }
+
+    output.innerHTML = pageItems.map(item => `
+      <article class="hadith-item">
+        <div class="hadith-item__meta">
+          <span>${escapeHtml(item.bookTitle)}</span>
+          <span>رقم ${escapeHtml(item.number)}</span>
+          ${item.sectionName ? `<span>${escapeHtml(item.sectionName)}</span>` : ''}
+          ${item.grade ? `<span class="hadith-grade">${escapeHtml(item.grade)}</span>` : ''}
+        </div>
+        <p class="hadith-item__text">${highlight(item.text, state.query)}</p>
+        ${item.reference ? `<div class="hadith-reference">${escapeHtml(item.reference)}</div>` : ''}
+      </article>
+    `).join('');
+  }
+
+  async function loadBook(bookId, showStatus) {
+    const book = getBook(bookId || state.activeBookId);
+    state.activeBookId = book.id;
+    localStorage.setItem('hadithActiveBook', book.id);
+    renderBooks();
+    if ($('#hadith-book-select')) $('#hadith-book-select').value = book.id;
+    if (showStatus) setStatus(`جارِ تحميل ${book.title}...`);
+
+    try {
+      const payload = await fetchBook(book.id);
+      state.sections = extractSections(payload);
+      renderSections();
+      state.currentItems = enrichItems(extractHadiths(payload), book);
+      state.query = '';
+      if ($('#hadith-query')) $('#hadith-query').value = '';
+      state.visibleItems = state.currentItems.slice();
+      state.page = 1;
+      setStatus(`تم تحميل ${book.title}: ${state.currentItems.length.toLocaleString('ar-EG')} حديث.`);
+      renderHadiths();
+    } catch (error) {
+      state.sections = [];
+      state.currentItems = [];
+      state.visibleItems = [];
+      renderSections();
+      renderHadiths();
+      setStatus(`فشل تحميل ${book.title}. تحقق من اتصال الإنترنت أو جرّب كتابًا آخر.`, true);
+    }
+  }
+
+  async function searchAllBooks(rawQuery) {
+    const normalizedQuery = normalizeArabic(rawQuery);
+    if (!normalizedQuery || normalizedQuery.length < 2) {
+      setStatus('اكتب حرفين على الأقل للبحث.', true);
+      return;
+    }
+
+    state.query = rawQuery;
+    state.visibleItems = [];
+    state.currentItems = [];
+    state.page = 1;
+    renderHadiths();
+
+    const matches = [];
+    for (let index = 0; index < HADITH_BOOKS.length; index += 1) {
+      const book = HADITH_BOOKS[index];
+      setStatus(`بحث شامل: تحميل ${book.title} (${index + 1}/${HADITH_BOOKS.length})...`);
+      try {
+        const payload = await fetchBook(book.id);
+        const previousSections = state.sections;
+        state.sections = extractSections(payload);
+        const items = enrichItems(extractHadiths(payload), book);
+        state.sections = previousSections;
+        matches.push(...items.filter(item => normalizeArabic(`${item.text} ${item.bookTitle} ${item.sectionName} ${item.number}`).includes(normalizedQuery)));
+        state.currentItems = matches;
+        state.visibleItems = matches.slice(0, 500);
+        renderHadiths();
+      } catch (error) {
+        // Continue searching remaining books.
+      }
+    }
+
+    state.currentItems = matches;
+    state.visibleItems = matches.slice(0, 500);
+    if (matches.length > 500) {
+      setStatus(`تم العثور على ${matches.length.toLocaleString('ar-EG')} نتيجة. تم عرض أول 500 نتيجة لتخفيف الصفحة.`);
+    } else {
+      setStatus(`انتهى البحث الشامل: ${matches.length.toLocaleString('ar-EG')} نتيجة.`);
+    }
+    renderHadiths();
+  }
+
+  async function runSearch() {
+    const rawQuery = $('#hadith-query')?.value.trim() || '';
+    const scope = $('#hadith-search-scope')?.value || 'current';
+    if (rawQuery.length < 2) {
+      state.query = '';
+      applyFilters(true);
+      setStatus('اكتب حرفين على الأقل للبحث، أو اترك الحقل فارغًا لعرض الكتاب كاملًا.');
+      return;
+    }
+
+    if (scope === 'all') {
+      await searchAllBooks(rawQuery);
+      return;
+    }
+
+    if (!state.currentItems.length) await loadBook(state.activeBookId, true);
+    state.query = rawQuery;
+    applyFilters(true);
+    setStatus(`نتائج البحث داخل الكتاب الحالي: ${state.visibleItems.length.toLocaleString('ar-EG')}.`);
+  }
+
+  function bindEvents() {
+    $$('[data-theme]').forEach(button => button.addEventListener('click', () => setTheme(button.dataset.theme)));
+    $$('[data-font]').forEach(button => {
+      button.addEventListener('click', () => setFontScale(state.fontScale + (button.dataset.font === 'increase' ? 0.08 : -0.08)));
+    });
+
+    $('#hadith-book-list')?.addEventListener('click', event => {
+      const button = event.target.closest('[data-hadith-book]');
+      if (!button) return;
+      loadBook(button.dataset.hadithBook, true);
+    });
+
+    $('#hadith-book-select')?.addEventListener('change', event => {
+      state.activeBookId = event.target.value;
+      renderBooks();
+      setStatus(`تم اختيار ${getBook(state.activeBookId).title}. اضغط تحميل الكتاب.`);
+    });
+
+    $('#hadith-load-book')?.addEventListener('click', () => loadBook(state.activeBookId, true));
+    $('#hadith-section-select')?.addEventListener('change', () => applyFilters(true));
+    $('#hadith-search-btn')?.addEventListener('click', runSearch);
+    $('#hadith-query')?.addEventListener('keydown', event => {
+      if (event.key === 'Enter') runSearch();
+    });
+    $('#hadith-prev-page')?.addEventListener('click', () => {
+      state.page -= 1;
+      renderHadiths();
+      $('#hadith-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    $('#hadith-next-page')?.addEventListener('click', () => {
+      state.page += 1;
+      renderHadiths();
+      $('#hadith-results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  function init() {
+    if (!$('#hadith-app')) return;
+    setTheme();
+    setFontScale(state.fontScale);
+    renderBooks();
+    bindEvents();
+    setStatus(`جاهز. الكتاب المختار: ${getBook(state.activeBookId).title}.`);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 })();
